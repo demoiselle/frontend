@@ -1,0 +1,21 @@
+{
+  "name": "@demoiselle/http",
+  "version": "0.0.1",
+  "description": "Demoiselle Frontend Http Service",
+  "main": "bundles/http.umd.js",
+  "module": "index.js",
+  "typings": "index.d.ts",
+  "author": "angular",
+  "license": "MIT",
+  "peerDependencies": {
+    "rxjs": "5.0.0-beta.12",
+    "@angular/core": "^2.0.1",
+    "@angular/platform-browser": "^2.0.1",
+    "@angular/http": "^2.0.1"
+
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/demoiselle/frontend.git"
+  }
+}
