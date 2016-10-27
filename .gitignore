@@ -23,5 +23,5 @@ npm-debug.log
 # build-analytics
 .build-analytics
 
-# rollup-test output
-/modules/rollup-test/dist/
+# Coverage directory used by tools like istanbul
+coverage
