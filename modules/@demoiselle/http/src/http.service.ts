@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Http, RequestOptions, ConnectionBackend, RequestOptionsArgs, Response} from '@angular/http';
+import {Http, RequestOptions, ConnectionBackend, RequestOptionsArgs, Response, XHRBackend} from '@angular/http';
 import {Observable} from 'rxjs/Rx';
 //import { tokenNotExpired, JwtHelper, AuthHttp } from 'angular2-jwt';
 
@@ -35,12 +35,12 @@ export class HttpService extends Http {
     }
 
     /**
-     * Append endpoint url according to class attribute endpoints
+     * Append endpoint url according to endpoints configuration
      * Rules:
      * 
      * Url 'http://someurl'             => Url is not changed
      * Url '~endpoint1/api/resource'    => endpoint1's url concatenated with 'api/resource'
-     * Url 'api/resource'               => Request is made to local server 
+     * Url 'api/resource'               => first endpoint url concatenated with 'api/resource' (ideal for single endpoint config)
      */
     private appendEndpoint(url: string) : string {
         if (!(url.lastIndexOf('http', 0) === 0)) { // startsWith in ES5
@@ -51,14 +51,13 @@ export class HttpService extends Http {
                     return this.endpoints[endpoint] + apiUrl;
                 } else {
                     // show notification
-                    alert('Request error: Endpoint configuration wrong!');
+                    alert('Request error: Endpoint configuration wrong for ' + endpoint);
                 }
 
             } else {
-                // get first endpoint
+                // use first endpoint
                 let endpointUrl = '';
                 for (var key in this.endpoints) {
-                    console.log('key: ' + key + ' ---- value: ' + this.endpoints[key]);
                     if(this.endpoints.hasOwnProperty(key)) {
                         endpointUrl = this.endpoints[key];
                         break;
@@ -70,5 +69,13 @@ export class HttpService extends Http {
 
         }
         return url;
+    }
+}
+
+export function HttpServiceProvider(endpoints: any) {
+    return {
+      provide: Http, 
+      useFactory: (backend: XHRBackend, defaultOptions: RequestOptions) => new HttpService(backend, defaultOptions, endpoints),
+      deps: [XHRBackend, RequestOptions]
     }
 }

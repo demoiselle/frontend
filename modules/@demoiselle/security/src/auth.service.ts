@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { Headers, Http } from '@angular/http';
 import {Observable} from 'rxjs/Rx';
 
-import { tokenNotExpired, JwtHelper, AuthHttp } from 'angular2-jwt';
+import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 
 @Injectable()
 export class AuthService {
 
   jwtHelper: JwtHelper = new JwtHelper();
 
-  constructor(private http: Http, private authHttp: AuthHttp) {
+  constructor(private http: Http, private authEndpointUrl: string) {
   }
 
 
@@ -28,7 +28,7 @@ export class AuthService {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
 
-    return this.http.post('http://supsd.cta.serpro/livraria/api/auth',
+    return this.http.post(this.authEndpointUrl + 'api/auth',
     //return this.http.post('api/auth',
       JSON.stringify(credentials),
       { headers: headers })
@@ -39,11 +39,11 @@ export class AuthService {
         localStorage.setItem('id_token', token);
 
          //_this.http.get('http://supsd.cta.serpro/livraria/api/book')
-         _this.http.get('~produto/api/book')
-             .map(res => res.json())
-             .subscribe((res) => {
-                 console.log(res)
-             });
+        //  _this.http.get('~produto/api/book')
+        //      .map(res => res.json())
+        //      .subscribe((res) => {
+        //          console.log(res)
+        //      });
 
       });
 
@@ -74,9 +74,7 @@ export class AuthService {
     ],
     "permissions": {}
   }
-    
   */
-
   getDataFromToken() {
     let token = localStorage.getItem('id_token');
     var data = null;
@@ -93,12 +91,11 @@ export class AuthService {
 
       var hasAuthorizedRole = false;
 
-      var perfil = null; //this.$rootScope.currentUser.perfil;
-      //alert(localStorage.getItem('token'));
+      var perfil = this.getDataFromToken().roles;
 
       if (perfil !== undefined && perfil !== null) {
         for (let i = 0; i < authorizedRoles.length; i++) {
-          if (authorizedRoles[i] === perfil) {
+          if (perfil.indexOf(authorizedRoles[i]) !== -1) {
             hasAuthorizedRole = true;
             break;
           }
@@ -117,7 +114,7 @@ export class AuthService {
       let headers = new Headers();
       headers.append('Content-Type', 'application/json');
 
-      return this.http.get('http://supsd.cta.serpro/livraria/api/auth',
+      return this.http.get(this.authEndpointUrl + 'api/auth',
         { headers: headers })
         .map(res => res.json())
         .subscribe((res) => {
@@ -142,4 +139,12 @@ export class AuthService {
   }
 
 
+}
+
+export function AuthServiceProvider(authEndpointUrl: string){
+  return {
+    provide: AuthService,
+    useFactory: (http: Http) => new AuthService(http, authEndpointUrl),
+    deps: [Http]
+  }
 }
