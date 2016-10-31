@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
-import { HttpService } from './http.service';
+import { HttpService, HttpServiceProvider } from './http.service';
 
 
 @NgModule({
     declarations: [],
     providers: [
-        HttpService
+        HttpServiceProvider({
+            'main' : 'http://localhost:9090'
+        })
         
     ]
     
