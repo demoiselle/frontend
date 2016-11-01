@@ -7,6 +7,9 @@
     "sourceMap": true,
     "noEmitHelpers": true
   },
+  "exclude": [
+    "node_modules"
+  ],
   "compileOnSave": false,
   "buildOnSave": false,
   "awesomeTypescriptLoaderOptions": {

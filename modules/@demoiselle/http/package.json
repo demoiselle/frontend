@@ -1,18 +1,38 @@
 {
   "name": "@demoiselle/http",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Demoiselle Frontend Http Service",
-  "main": "bundles/http.umd.js",
-  "module": "index.js",
-  "typings": "index.d.ts",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
   "author": "angular",
   "license": "MIT",
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "../../../node_modules/typescript/bin/tsc || true",
+    "typings": "typings",
+    "prepublish": "npm run typings -- install && npm run build"
+  },
   "peerDependencies": {
     "rxjs": "5.0.0-beta.12",
     "@angular/core": "^2.0.1",
     "@angular/platform-browser": "^2.0.1",
     "@angular/http": "^2.0.1"
 
+  },
+  "devDependencies": {
+    "@angular/core": "2.0.1",
+    "@angular/platform-browser": "2.0.1",
+    "@angular/http": "2.0.1",
+    "@angular/router": "~3.0.1",
+    "rxjs": "5.0.0-beta.12",
+    "zone.js": "0.6.21",
+    "typescript": "2.0.2",
+    "webpack": "^1.13.0",
+    "typings": "^0.7.9"
   },
   "repository": {
     "type": "git",
