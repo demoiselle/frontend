@@ -14,7 +14,7 @@
     "prebuild": "rm -rf dist",
     "build": "../../../node_modules/typescript/bin/tsc || true",
     "typings": "typings",
-    "prepublish": "npm run typings -- install && npm run build"
+    "prepublish": "npm run build"
   },
   "peerDependencies": {
     "rxjs": "5.0.0-beta.12",

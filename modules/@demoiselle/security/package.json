@@ -14,7 +14,7 @@
     "prebuild": "rm -rf dist",
     "build": "../../../node_modules/typescript/bin/tsc || true",
     "typings": "typings",
-    "prepublish": "npm run typings -- install && npm run build"
+    "prepublish": "npm run build"
   },
   "dependencies": {
     "angular2-jwt": "^0.1.24"
