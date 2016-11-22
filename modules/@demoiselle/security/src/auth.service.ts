@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { Headers, Http } from '@angular/http';
 import {Observable} from 'rxjs/Rx';
 
-import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
+import { AuthHttp, tokenNotExpired, JwtHelper } from 'angular2-jwt';
 
 @Injectable()
 export class AuthService {
 
   jwtHelper: JwtHelper = new JwtHelper();
 
-  constructor(private http: Http, private authEndpointUrl: string) {
+  constructor(private http: Http, private authHttp: AuthHttp, private authEndpointUrl: string) {
   }
 
 
@@ -28,22 +28,20 @@ export class AuthService {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
 
-    return this.http.post(this.authEndpointUrl + 'api/auth',
-    //return this.http.post('api/auth',
+    return this.http.post(this.authEndpointUrl + 'auth',
       JSON.stringify(credentials),
       { headers: headers })
-      //.map(res => res.json())
       .map((res) => {
-        var responseHeaders = res.headers;
-        var token = responseHeaders.get('Set-Token');
-        localStorage.setItem('id_token', token);
+        // ** located in header response
+        // var responseHeaders = res.headers;
+        // var token = responseHeaders.get('Set-Token');
+        // localStorage.setItem('id_token', token);
 
-         //_this.http.get('http://supsd.cta.serpro/livraria/api/book')
-        //  _this.http.get('~produto/api/book')
-        //      .map(res => res.json())
-        //      .subscribe((res) => {
-        //          console.log(res)
-        //      });
+        // ** located in body response
+        let json = res.json();
+        let token = json.token;
+        localStorage.setItem('id_token', token);
+        return json;
 
       });
 
@@ -53,27 +51,39 @@ export class AuthService {
   /**
    * getUserFromToken demoiselle 2.5 backend
    */
-  getUserFromToken() {
-    let data = this.getDataFromToken();
-    return JSON.parse(data.user);
-  }
+  // getUserFromToken25() {
+  //   let data = this.getDataFromToken();
+  //   return JSON.parse(data.user);
+  // }
 
 
   /* demoiselle 3 backend jwttoken
   {
-    "iss": "STORE",
-    "aud": "web",
-    "exp": 1476756643,
-    "jti": "fQmYw8mvGUraZMzQZ3-bgQ",
-    "iat": 1476713443,
-    "nbf": 1476713383,
-    "identity": "1",
-    "name": "Demoiselle",
-    "roles": [
-      "ADMINISTRATOR"
+  "iss": "APP",
+  "aud": "web",
+  "exp": 1478863521,
+  "jti": "2384598374593874",
+  "iat": 1478863221,
+  "nbf": 1478863161,
+  "identity": "1",
+  "name": "Demoiselle",
+  "roles": [
+    "ADMINISTRATOR"
+  ],
+  "permissions": {
+    "SWAGGER": [
+      "LIST"
+    ]
+  },
+  "params": {
+    "Fone": [
+      null
     ],
-    "permissions": {}
+    "Email": [
+      "admin@demoiselle.org"
+    ]
   }
+}
   */
   getDataFromToken() {
     let token = localStorage.getItem('id_token');
@@ -84,6 +94,21 @@ export class AuthService {
     return data;
   }
 
+  getRolesFromToken() {
+    return this.getDataFromToken().roles;
+  }
+  getPermissionsFromToken() {
+    return this.getDataFromToken().permissions;
+  }
+  getParamsFromToken() {
+    return this.getDataFromToken().params;
+  }
+  getIdentityFromToken() {
+    return this.getDataFromToken().identity;
+  }
+  getNameFromToken() {
+    return this.getDataFromToken().name;
+  }
 
   isAuthorized(authorizedRoles: string[]) {
 
@@ -91,11 +116,11 @@ export class AuthService {
 
       var hasAuthorizedRole = false;
 
-      var perfil = this.getDataFromToken().roles;
+      var roles = this.getRolesFromToken();
 
-      if (perfil !== undefined && perfil !== null) {
+      if (roles !== undefined && roles !== null) {
         for (let i = 0; i < authorizedRoles.length; i++) {
-          if (perfil.indexOf(authorizedRoles[i]) !== -1) {
+          if (roles.indexOf(authorizedRoles[i]) !== -1) {
             hasAuthorizedRole = true;
             break;
           }
@@ -114,7 +139,7 @@ export class AuthService {
       let headers = new Headers();
       headers.append('Content-Type', 'application/json');
 
-      return this.http.get(this.authEndpointUrl + 'api/auth',
+      return this.authHttp.get(this.authEndpointUrl + 'auth',
         { headers: headers })
         .map(res => res.json())
         .subscribe((res) => {
@@ -144,7 +169,7 @@ export class AuthService {
 export function AuthServiceProvider(authEndpointUrl: string){
   return {
     provide: AuthService,
-    useFactory: (http: Http) => new AuthService(http, authEndpointUrl),
-    deps: [Http]
+    useFactory: (http: Http, authHttp: AuthHttp) => new AuthService(http, authHttp, authEndpointUrl),
+    deps: [Http, AuthHttp]
   }
 }

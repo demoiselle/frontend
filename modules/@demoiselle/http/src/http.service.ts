@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Http, RequestOptions, ConnectionBackend, RequestOptionsArgs, Response, XHRBackend} from '@angular/http';
+import {Http, Headers, RequestOptions, ConnectionBackend, RequestOptionsArgs, Response, XHRBackend} from '@angular/http';
 import {Observable} from 'rxjs/Rx';
+import { Request } from '@angular/http/src/static_request';
 //import { tokenNotExpired, JwtHelper, AuthHttp } from 'angular2-jwt';
 
 @Injectable()
@@ -26,12 +27,40 @@ export class HttpService extends Http {
 
     post(url: string, body: any, options?: RequestOptionsArgs): Observable<Response> {
         url = this.appendEndpoint(url);
-        return super.post(url, body, options);
+        return this.intercept(super.post(url, body, options));
+
     }
 
     get(url: string, options?: RequestOptionsArgs): Observable<Response> {
         url = this.appendEndpoint(url);
-        return super.get(url, options);
+        return this.intercept(super.get(url, options));
+    }
+
+    put(url: string, body: any, options?: RequestOptionsArgs): Observable<Response> {
+        url = this.appendEndpoint(url);
+        return this.intercept(super.put(url, body, options));
+    }
+    /**
+     * Performs a request with `delete` http method.
+     */
+    delete(url: string, options?: RequestOptionsArgs): Observable<Response> {
+        url = this.appendEndpoint(url);
+        return this.intercept(super.delete(url, options));
+    }
+
+    intercept(observable: Observable<Response>): Observable<Response> {
+        return observable.catch((err, source) => {
+			if (err.status  == 401) { // && !_.endsWith(err.url, '/login')) {
+                //this._router.navigate(['/login']);
+                return Observable.empty();
+            } else if (err.status  == 412 || err.status == 422) {
+                alert('Erro de validação! Favor corrigir os campos com problema');
+                return Observable.throw(err);
+            } else {
+                return Observable.throw(err);
+			}
+        });
+
     }
 
     /**
@@ -48,7 +77,20 @@ export class HttpService extends Http {
                 let apiUrl = url.substring(url.indexOf('/')+1);
                 let endpoint = url.substring(1, url.indexOf('/'));
                 if (this.endpoints.hasOwnProperty(endpoint)) {
-                    return this.endpoints[endpoint] + apiUrl;
+
+                    if(endpoint.toLowerCase() == 'multitenancy') {
+                        return this.endpoints[endpoint] + apiUrl;
+                    } else {
+                        if(localStorage.getItem('dml_tenant')) {
+                            return this.endpoints[endpoint] + 
+                                JSON.parse(localStorage.getItem('dml_tenant')).name + '/' + 
+                                apiUrl;
+                        } else {
+                            return this.endpoints[endpoint] + apiUrl;
+                        }
+                    }
+
+                    
                 } else {
                     // show notification
                     alert('Request error: Endpoint configuration wrong for ' + endpoint);
