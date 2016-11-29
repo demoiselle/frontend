@@ -8,7 +8,7 @@ describe('Http Service', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
         imports: [DmlHttpModule],
-        providers: [HttpServiceProvider('test')]
+        providers: [HttpServiceProvider({}, {'active':false})]
     });
   });
 

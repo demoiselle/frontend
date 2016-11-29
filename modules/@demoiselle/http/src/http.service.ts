@@ -17,7 +17,7 @@ export class HttpService extends Http {
      * }
      * 
      */
-    constructor(_backend: ConnectionBackend, _defaultOptions: RequestOptions, private endpoints: any) {
+    constructor(_backend: ConnectionBackend, _defaultOptions: RequestOptions, private endpoints: any, private multitenancy: any) {
         super(_backend, _defaultOptions);
         let jwtHeader = localStorage.getItem('id_token');
         if (jwtHeader != null) {
@@ -77,10 +77,8 @@ export class HttpService extends Http {
                 let apiUrl = url.substring(url.indexOf('/')+1);
                 let endpoint = url.substring(1, url.indexOf('/'));
                 if (this.endpoints.hasOwnProperty(endpoint)) {
-
-                    if(endpoint.toLowerCase() == 'multitenancy') {
-                        return this.endpoints[endpoint] + apiUrl;
-                    } else {
+                    
+                    if(this.multitenancy.active) {
                         if(localStorage.getItem('dml_tenant')) {
                             return this.endpoints[endpoint] + 
                                 JSON.parse(localStorage.getItem('dml_tenant')).name + '/' + 
@@ -88,6 +86,8 @@ export class HttpService extends Http {
                         } else {
                             return this.endpoints[endpoint] + apiUrl;
                         }
+                    } else {
+                        return this.endpoints[endpoint] + apiUrl;
                     }
 
                     
@@ -114,10 +114,10 @@ export class HttpService extends Http {
     }
 }
 
-export function HttpServiceProvider(endpoints: any) {
+export function HttpServiceProvider(endpoints: any, multitenancy: any) {
     return {
       provide: Http, 
-      useFactory: (backend: XHRBackend, defaultOptions: RequestOptions) => new HttpService(backend, defaultOptions, endpoints),
+      useFactory: (backend: XHRBackend, defaultOptions: RequestOptions) => new HttpService(backend, defaultOptions, endpoints, multitenancy),
       deps: [XHRBackend, RequestOptions]
     }
 }

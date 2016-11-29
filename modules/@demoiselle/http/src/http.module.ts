@@ -5,9 +5,14 @@ import { HttpService, HttpServiceProvider } from './http.service';
 @NgModule({
     declarations: [],
     providers: [
-        HttpServiceProvider({
+        HttpServiceProvider(
+            {
             'main' : 'http://localhost:9090'
-        })
+            },
+            {
+                'active' : false
+            }
+        )
         
     ]
     
