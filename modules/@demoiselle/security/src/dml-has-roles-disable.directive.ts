@@ -35,7 +35,7 @@ export class DmlHasRolesDisableDirective {
         }
     }
 
-    disableElement(element) {
+    disableElement(element: any) {
         let tagName = element.tagName;
         if (tagName === 'INPUT' ||
             tagName === 'SELECT' ||

@@ -14,8 +14,8 @@ export class AuthService {
 
 
   isAuthenticated() {
-    return tokenNotExpired('id_token');
-    //return localStorage.getItem('currentUser');
+    //return tokenNotExpired('id_token');
+    return (localStorage.getItem('id_token') != null);
   }
 
   logout() {
@@ -28,7 +28,7 @@ export class AuthService {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
 
-    return this.http.post(this.authEndpointUrl + '/security/login',
+    return this.http.post(this.authEndpointUrl + '/auth/login',
       JSON.stringify(credentials),
       { headers: headers })
       .map((res) => {
@@ -87,7 +87,7 @@ export class AuthService {
   */
   getDataFromToken() {
     let token = localStorage.getItem('id_token');
-    var data = null;
+    let data: any = null;
     if (token !== null && typeof token !== undefined) {
       data = this.jwtHelper.decodeToken(token);
     }
@@ -139,7 +139,7 @@ export class AuthService {
       let headers = new Headers();
       headers.append('Content-Type', 'application/json');
 
-      return this.authHttp.get(this.authEndpointUrl + 'auth',
+      this.authHttp.get(this.authEndpointUrl + 'auth',
         { headers: headers })
         .map(res => res.json())
         .subscribe((res) => {
@@ -155,10 +155,10 @@ export class AuthService {
  */
   initializeReTokenPolling(interval: number) {
     
-    return Observable
+    Observable
       .interval(interval)
       .subscribe(() => {
-        return this.reToken();
+        this.reToken();
         
       });
   }
