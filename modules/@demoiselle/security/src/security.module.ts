@@ -16,7 +16,7 @@ import { provideAuth, AUTH_PROVIDERS } from 'angular2-jwt';
         DmlHasRolesDisableDirective
     ],
     providers: [
-        AuthService,
+        //AuthService,
         AuthGuard,
         AUTH_PROVIDERS,
         provideAuth({

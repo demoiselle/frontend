@@ -15,7 +15,7 @@ Que vai gerar uma requisição para: 'http://localhost/app/api/v1/users';
 npm install --save @demoiselle/http
 ```
 
-Adicionar o serviço aos providers da aplicação principal, através da chamada a função HttpServiceProvider:
+Adicionar o serviço aos providers da aplicação principal (ou alternativamente no CoreModule), através da chamada a função HttpServiceProvider:
 ```
 import {HttpServiceProvider} from '@demoiselle/http';
 ...

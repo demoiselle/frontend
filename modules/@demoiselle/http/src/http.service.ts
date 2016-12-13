@@ -18,7 +18,7 @@ export class HttpService extends Http {
         config.endpoints = config.endpoints || {};
         config.multitenancy = config.multitenancy || {'active' : false};
         config.unAuthorizedRoute = config.unAuthorizedRoute || '/login';
-        config.tokenKey = config.tokenKey || 'id_token' 
+        config.tokenKey = config.tokenKey || 'id_token';
 
         let jwtHeader = localStorage.getItem(config.tokenKey);
         if (jwtHeader != null) {
