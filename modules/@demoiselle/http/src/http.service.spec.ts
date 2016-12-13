@@ -8,7 +8,16 @@ describe('Http Service', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
         imports: [DmlHttpModule],
-        providers: [HttpServiceProvider({}, {'active':false})]
+        providers: [HttpServiceProvider({
+            'endpoints': {
+                'main' : 'http://localhost:9090'
+            },
+            'multitenancy': {
+                'active' : false
+            },
+            'unAuthorizedRoute' : '/login',
+            'tokenKey' : 'id_token'
+        })]
     });
   });
 

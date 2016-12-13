@@ -5,14 +5,16 @@ import { HttpService, HttpServiceProvider } from './http.service';
 @NgModule({
     declarations: [],
     providers: [
-        HttpServiceProvider(
-            {
-            'main' : 'http://localhost:9090'
+        HttpServiceProvider({
+            'endpoints': {
+                'main' : 'http://localhost:9090'
             },
-            {
+            'multitenancy': {
                 'active' : false
-            }
-        )
+            },
+            'unAuthorizedRoute' : '/login',
+            'tokenKey' : 'id_token'
+        })
         
     ]
     

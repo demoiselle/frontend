@@ -1,7 +1,8 @@
-import {Injectable} from '@angular/core';
-import {Http, Headers, RequestOptions, ConnectionBackend, RequestOptionsArgs, Response, XHRBackend} from '@angular/http';
-import {Observable} from 'rxjs/Rx';
+import { Injectable } from '@angular/core';
+import { Http, Headers, RequestOptions, ConnectionBackend, RequestOptionsArgs, Response, XHRBackend } from '@angular/http';
+import { Observable } from 'rxjs/Rx';
 import { Request } from '@angular/http/src/static_request';
+import { Router } from '@angular/router';
 //import { tokenNotExpired, JwtHelper, AuthHttp } from 'angular2-jwt';
 
 @Injectable()
@@ -10,16 +11,16 @@ export class HttpService extends Http {
     /**
      * Constructor
      * 
-     * Endpoint structure:
-     * {
-     *      'endpoint1' : 'http://endpoint1.com',
-     *      'endpoint2' : 'http://endpoint2.com',
-     * }
-     * 
      */
-    constructor(_backend: ConnectionBackend, _defaultOptions: RequestOptions, private endpoints: any, private multitenancy: any) {
+    constructor(_backend: ConnectionBackend, _defaultOptions: RequestOptions, private router: Router, private config: any) {
         super(_backend, _defaultOptions);
-        let jwtHeader = localStorage.getItem('id_token');
+
+        config.endpoints = config.endpoints || {};
+        config.multitenancy = config.multitenancy || {'active' : false};
+        config.unAuthorizedRoute = config.unAuthorizedRoute || '/login';
+        config.tokenKey = config.tokenKey || 'id_token' 
+
+        let jwtHeader = localStorage.getItem(config.tokenKey);
         if (jwtHeader != null) {
             this._defaultOptions.headers.append('Authorization', 'Token ' + jwtHeader);
         }
@@ -51,9 +52,10 @@ export class HttpService extends Http {
     intercept(observable: Observable<Response>): Observable<Response> {
         return observable.catch((err, source) => {
 			if (err.status  == 401) { // && !_.endsWith(err.url, '/login')) {
-                //this._router.navigate(['/login']);
+                this.router.navigate([this.config.unAuthorizedRoute]);
                 return Observable.empty();
             } else if (err.status  == 412 || err.status == 422) {
+                // TODO: Tratamento da validação ??? 
                 alert('Erro de validação! Favor corrigir os campos com problema');
                 return Observable.throw(err);
             } else {
@@ -76,18 +78,18 @@ export class HttpService extends Http {
             if (url.lastIndexOf('~', 0) === 0) { // startsWith in ES5
                 let apiUrl = url.substring(url.indexOf('/')+1);
                 let endpoint = url.substring(1, url.indexOf('/'));
-                if (this.endpoints.hasOwnProperty(endpoint)) {
+                if (this.config.endpoints.hasOwnProperty(endpoint)) {
                     
-                    if(this.multitenancy.active) {
+                    if(this.config.multitenancy.active) {
                         if(localStorage.getItem('dml_tenant')) {
-                            return this.endpoints[endpoint] + 
+                            return this.config.endpoints[endpoint] + 
                                 JSON.parse(localStorage.getItem('dml_tenant')).name + '/' + 
                                 apiUrl;
                         } else {
-                            return this.endpoints[endpoint] + apiUrl;
+                            return this.config.endpoints[endpoint] + apiUrl;
                         }
                     } else {
-                        return this.endpoints[endpoint] + apiUrl;
+                        return this.config.endpoints[endpoint] + apiUrl;
                     }
 
                     
@@ -99,9 +101,9 @@ export class HttpService extends Http {
             } else {
                 // use first endpoint
                 let endpointUrl = '';
-                for (var key in this.endpoints) {
-                    if(this.endpoints.hasOwnProperty(key)) {
-                        endpointUrl = this.endpoints[key];
+                for (var key in this.config.endpoints) {
+                    if(this.config.endpoints.hasOwnProperty(key)) {
+                        endpointUrl = this.config.endpoints[key];
                         break;
                     }
                 }
@@ -114,10 +116,33 @@ export class HttpService extends Http {
     }
 }
 
-export function HttpServiceProvider(endpoints: any, multitenancy: any) {
+/**
+ * HttpService provider function.
+ * 
+ * @param config
+ * Config attributes:
+ * - endpoints: object with a list of endpoints available for the app
+ * - multitenancy: multitenancy configuration
+ * - unAuthorizedRoute: string value for unauthorized redirection route
+ * Example:
+ * {
+ *  'endpoints' : { 
+ *      'main': 'http://localhost:9090/app/api/v1',
+ *      'main2': 'http://localhost:9090/app2/api/v1'
+ *  },
+ *  'multitenancy': {
+ *      'active': false,
+ *      'apiUrl': 'http://localhost:9090/users/api/v1/'
+ *  },
+ *  'unAuthorizedRoute' : '/login',
+ *  'tokenKey' : 'id_token'
+ * }
+ *  
+ */
+export function HttpServiceProvider(config: any) {
     return {
       provide: Http, 
-      useFactory: (backend: XHRBackend, defaultOptions: RequestOptions) => new HttpService(backend, defaultOptions, endpoints, multitenancy),
-      deps: [XHRBackend, RequestOptions]
+      useFactory: (backend: XHRBackend, defaultOptions: RequestOptions, router: Router) => new HttpService(backend, defaultOptions, router, config),
+      deps: [XHRBackend, RequestOptions, Router]
     }
 }
