@@ -1,6 +1,6 @@
 {
   "name": "@demoiselle/security",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Demoiselle Frontend security module",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -17,22 +17,22 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "angular2-jwt": "^0.1.24"
+    "angular2-jwt": "^0.1.26"
   },
   "_peerDependencies": {
-    "rxjs": "5.0.0-beta.12",
-    "@angular/core": "^2.0.1",
-    "@angular/platform-browser": "^2.0.1",
-    "@angular/http": "^2.0.1",
-    "@angular/router": "~3.0.1"
+    "rxjs": "5.0.1",
+    "@angular/core": "^2.3.0",
+    "@angular/platform-browser": "^2.3.0",
+    "@angular/http": "^2.3.0",
+    "@angular/router": "~3.3.0"
   },
   "_devDependencies": {
-    "@angular/core": "2.0.1",
-    "@angular/platform-browser": "2.0.1",
-    "@angular/http": "2.0.1",
-    "@angular/router": "~3.0.1",
-    "rxjs": "5.0.0-beta.12",
-    "zone.js": "0.6.21",
+    "@angular/core": "2.3.0",
+    "@angular/platform-browser": "2.3.0",
+    "@angular/http": "2.3.0",
+    "@angular/router": "~3.3.0",
+    "rxjs": "5.0.1",
+    "zone.js": "0.7.2",
     "typescript": "2.0.2",
     "webpack": "^1.13.0",
     "typings": "^0.7.9"
