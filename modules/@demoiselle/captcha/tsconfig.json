@@ -17,7 +17,8 @@
     "typings/main.d.ts",
     "typings/main",
     "testing",
-    "test"
+    "test",
+    "dist"
   ],
   "awesomeTypescriptLoaderOptions": {
     "resolveGlobs": true,
