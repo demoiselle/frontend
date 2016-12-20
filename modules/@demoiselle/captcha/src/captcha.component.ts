@@ -1,6 +1,5 @@
-import { Component, Input, Output, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
 
 @Component({
     selector: 'dml-captcha',
@@ -30,25 +29,12 @@ import { Observable } from 'rxjs/Observable';
 `
 })
 
-export class Captcha {
-
-    /**
-     * Imagem em Base64
-     */
-    image: string;
-
-    /**
-     * Campo oculto para controle do captcha pelo serviço
-     */
-    token: string;
-}
-
 export class CaptchaComponent implements OnInit {
 
     /**
      * Captcha Model
      */
-    captcha: Captcha;
+    private captcha: Captcha;
 
     /**
      * Endereço do serviço de captcha
@@ -63,7 +49,6 @@ export class CaptchaComponent implements OnInit {
     /**
      * Sinaliza se o componente está carregando as informações do captcha
      */
-    // @Output() 
     public isLoading: Boolean;
 
     // Referências para os elementos HTML do Component
@@ -134,7 +119,7 @@ export class CaptchaComponent implements OnInit {
 
         // Carrega e inclui um elemento de audio uma única vez (por componente)
         if (!this.audioEl) {
-            this.audioEl = document.createElement("audio");
+            this.audioEl = document.createElement('audio');
             this.containerEl.appendChild(this.audioEl);
         }
 
@@ -165,11 +150,12 @@ export class CaptchaComponent implements OnInit {
 
             switch (res.text()) {
                 case '1':
-                    console.info('Captcha validado com sucesso.');
+                    console.log('Captcha validado com sucesso.');
                     resultToken = true;
                     break;
                 case '2':
                     console.warn('Token não encontrado.');
+                    break;
                 default:
                     console.error('Captcha incorreto.');
                     break;
@@ -179,4 +165,17 @@ export class CaptchaComponent implements OnInit {
         }
 
     }
+}
+
+class Captcha {
+
+    /**
+     * Imagem em Base64
+     */
+    image: string;
+
+    /**
+     * Campo oculto para controle do captcha pelo serviço
+     */
+    token: string;
 }
