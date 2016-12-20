@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { CaptchaComponent } from './captcha.component';
+import { CaptchaComponent } from '../src/captcha.component';
 
 describe('CaptchaComponent', () => {
 
