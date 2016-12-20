@@ -1,20 +1,15 @@
 {
   "name": "@demoiselle/captcha",
   "version": "0.0.1",
-  "description": "Demoiselle Frontend Captcha Module",
+  "description": "Demoiselle Frontend - Captcha Component",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
     "src"
   ],
+  "author": "SERPRO",
   "license": "MIT",
-  "scripts": {
-    "prebuild": "rm -rf dist",
-    "build": "../../../node_modules/typescript/bin/tsc || true",
-    "typings": "typings",
-    "prepublish": "npm run build"
-  },
   "peerDependencies": {
     "rxjs": "5.0.1",
     "@angular/core": "^2.3.0",
