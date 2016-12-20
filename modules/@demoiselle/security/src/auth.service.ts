@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http } from '@angular/http';
-import {Observable} from 'rxjs/Rx';
+import { Observable } from 'rxjs/Rx';
 
-import { AuthHttp, tokenNotExpired, JwtHelper } from 'angular2-jwt';
+import { AuthHttp, JwtHelper } from 'angular2-jwt';
 
 @Injectable()
 export class AuthService {
@@ -10,10 +10,10 @@ export class AuthService {
   jwtHelper: JwtHelper = new JwtHelper();
 
   constructor(private http: Http, private authHttp: AuthHttp, private config: any) {
-    //config.authEndpointUrl = config.authEndpointUrl || '';
+    // config.authEndpointUrl = config.authEndpointUrl || '';
     config.loginResourcePath = config.loginResourcePath || 'auth/login';
     config.tokenKey = config.tokenKey || 'id_token';
-    config.loginRoute = config.loginRoute || '/login';  
+    config.loginRoute = config.loginRoute || '/login';
   }
 
   public getLoginRoute() {
@@ -21,8 +21,7 @@ export class AuthService {
   }
 
   isAuthenticated() {
-    //return tokenNotExpired(this.config.tokenKey);
-    return (localStorage.getItem(this.config.tokenKey) != null);
+    return (localStorage.getItem(this.config.tokenKey) !== null);
   }
 
   logout() {
@@ -38,8 +37,8 @@ export class AuthService {
       { headers: headers })
       .map((res) => {
         // ** located in header response
-        // var responseHeaders = res.headers;
-        // var token = responseHeaders.get('Set-Token');
+        // let responseHeaders = res.headers;
+        // let token = responseHeaders.get('Set-Token');
         // localStorage.setItem('id_token', token);
 
         // ** located in body response
@@ -116,12 +115,11 @@ export class AuthService {
   }
 
   isAuthorized(authorizedRoles: string[]) {
+    let hasAuthorizedRole = false;
 
     if (this.isAuthenticated()) {
 
-      var hasAuthorizedRole = false;
-
-      var roles = this.getRolesFromToken();
+      let roles = this.getRolesFromToken();
 
       if (roles !== undefined && roles !== null) {
         for (let i = 0; i < authorizedRoles.length; i++) {
@@ -132,49 +130,41 @@ export class AuthService {
 
         }
       }
-    } else {
-      return false;
     }
 
     return hasAuthorizedRole;
   }
 
   reToken() {
-    if(this.isAuthenticated()) {
+    if (this.isAuthenticated()) {
       let headers = new Headers();
       headers.append('Content-Type', 'application/json');
 
-      this.authHttp.get(this.config.authEndpointUrl + 'auth',
-        { headers: headers })
+      this.authHttp.get(this.config.authEndpointUrl + 'auth', { headers: headers })
         .map(res => res.json())
         .subscribe((res) => {
-          var token = res.token;
+          let token = res.token;
           localStorage.setItem(this.config.tokenKey, token);
 
         });
     }
   }
 
-/**
- * Can be initiliazed/called from app.component.ts: ngAfterContentInit()
- */
+  /**
+   * Can be initiliazed/called from app.component.ts: ngAfterContentInit()
+   */
   initializeReTokenPolling(interval: number) {
-    
-    Observable
-      .interval(interval)
-      .subscribe(() => {
-        this.reToken();
-        
-      });
+
+    Observable.interval(interval).subscribe(() => {
+      this.reToken();
+    });
   }
-
-
 }
 
-export function AuthServiceProvider(config: any){
+export function AuthServiceProvider(config: any) {
   return {
     provide: AuthService,
     useFactory: (http: Http, authHttp: AuthHttp) => new AuthService(http, authHttp, config),
     deps: [Http, AuthHttp]
-  }
+  };
 }

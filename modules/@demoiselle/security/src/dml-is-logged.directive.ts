@@ -1,5 +1,5 @@
 import { Directive, TemplateRef, Input, ViewContainerRef } from '@angular/core';
-import {AuthService} from './auth.service';
+import { AuthService } from './auth.service';
 
 
 /**
@@ -20,9 +20,8 @@ import {AuthService} from './auth.service';
   selector: '[dmlIsLogged]'
 })
 export class DmlIsLoggedDirective {
-	
-  constructor(private _viewContainer: ViewContainerRef, private _template: TemplateRef<Object>,  private authService: AuthService) {}
 
+  constructor(private _viewContainer: ViewContainerRef, private _template: TemplateRef<Object>, private authService: AuthService) { }
 
   @Input()
   set dmlIsLogged(empty: any) {
@@ -32,5 +31,5 @@ export class DmlIsLoggedDirective {
       this._viewContainer.clear();
     }
   }
-    
+
 }

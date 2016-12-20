@@ -1,5 +1,5 @@
 import { Directive, ElementRef, Input, Renderer } from '@angular/core';
-import {AuthService} from './auth.service';
+import { AuthService } from './auth.service';
 
 
 /**
@@ -23,13 +23,11 @@ import {AuthService} from './auth.service';
 })
 export class DmlHasRolesDisableDirective {
 
-    constructor(private el: ElementRef, private renderer: Renderer, private authService: AuthService) {
-
-    }
+    constructor(private el: ElementRef, private renderer: Renderer, private authService: AuthService) { }
 
     @Input()
     set dmlHasRolesDisable(roles: string[]) {
-        
+
         if (!this.authService.isAuthorized(roles)) {
             this.disableElement(this.el.nativeElement);
         }
@@ -45,12 +43,11 @@ export class DmlHasRolesDisableDirective {
 
             this.renderer.setElementAttribute(element, 'disabled', 'true');
         } else {
-            
-            for(var i = 0; i < element.children.length; i++) {
+
+            for (let i = 0; i < element.children.length; i++) {
                 this.disableElement(element.children[i]);
             }
         }
     }
-
 
 }

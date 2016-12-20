@@ -1,25 +1,21 @@
 import { NgModule } from '@angular/core';
-import { HttpService, HttpServiceProvider } from './http.service';
-
+import { HttpServiceProvider } from './http.service';
 
 @NgModule({
     declarations: [],
     providers: [
         HttpServiceProvider({
             'endpoints': {
-                'main' : 'http://localhost:9090'
+                'main': 'http://localhost:9090'
             },
             'multitenancy': {
-                'active' : false
+                'active': false
             },
-            'unAuthorizedRoute' : '/login',
-            'tokenKey' : 'id_token'
+            'unAuthorizedRoute': '/login',
+            'tokenKey': 'id_token'
         })
-        
     ]
-    
-
 })
-export class DmlHttpModule {
 
+export class DmlHttpModule {
 }

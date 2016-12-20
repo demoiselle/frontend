@@ -6,11 +6,11 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Injectable} from '@angular/core';
-import {Connection, ConnectionBackend, ReadyState, Request, Response} from '@angular/http';
-import {ReplaySubject} from 'rxjs/ReplaySubject';
-import {Subject} from 'rxjs/Subject';
-import {take} from 'rxjs/operator/take';
+import { Injectable } from '@angular/core';
+import { Connection, ConnectionBackend, ReadyState, Request, Response } from '@angular/http';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { Subject } from 'rxjs/Subject';
+import { take } from 'rxjs/operator/take';
 
 
 /**
@@ -174,7 +174,7 @@ export class MockBackend implements ConnectionBackend {
    *
    * This property only exists in the mock implementation, not in real Backends.
    */
-  connections: any;  //<MockConnection>
+  connections: any;  // <MockConnection>
 
   /**
    * An array representation of `connections`. This array will be updated with each connection that
@@ -196,7 +196,7 @@ export class MockBackend implements ConnectionBackend {
     this.connectionsArray = [];
     this.connections = new Subject();
     this.connections.subscribe(
-        (connection: MockConnection) => this.connectionsArray.push(connection));
+      (connection: MockConnection) => this.connectionsArray.push(connection));
     this.pendingConnections = new Subject();
   }
 
@@ -208,7 +208,9 @@ export class MockBackend implements ConnectionBackend {
   verifyNoPendingRequests() {
     let pending = 0;
     this.pendingConnections.subscribe((c: MockConnection) => pending++);
-    if (pending > 0) throw new Error(`${pending} pending connections to be resolved`);
+    if (pending > 0) {
+      throw new Error(`${pending} pending connections to be resolved`);
+    }
   }
 
   /**
