@@ -4,7 +4,8 @@ import { Observable } from 'rxjs/Observable';
 
 @Component({
     selector: 'dml-captcha',
-    templateUrl: './captcha.template.html'
+    templateUrl: './captcha.template.html',
+    styleUrls: ['./captcha.component.scss']
 })
 
 export class Captcha {
