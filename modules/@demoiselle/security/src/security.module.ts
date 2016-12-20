@@ -1,10 +1,9 @@
-// imports
 import { NgModule } from '@angular/core';
-import {AuthService} from './auth.service';
-import {AuthGuard} from './auth.guard';
-import {DmlIsLoggedDirective} from './dml-is-logged.directive';
-import {DmlHasRolesDirective} from './dml-has-roles.directive';
-import {DmlHasRolesDisableDirective} from './dml-has-roles-disable.directive';
+// import { AuthService } from './auth.service';
+import { AuthGuard } from './auth.guard';
+import { DmlIsLoggedDirective } from './dml-is-logged.directive';
+import { DmlHasRolesDirective } from './dml-has-roles.directive';
+import { DmlHasRolesDisableDirective } from './dml-has-roles-disable.directive';
 
 import { provideAuth, AUTH_PROVIDERS } from 'angular2-jwt';
 
@@ -16,14 +15,14 @@ import { provideAuth, AUTH_PROVIDERS } from 'angular2-jwt';
         DmlHasRolesDisableDirective
     ],
     providers: [
-        //AuthService,
+        // AuthService,
         AuthGuard,
         AUTH_PROVIDERS,
         provideAuth({
             headerName: 'Authorization',
             headerPrefix: 'Token ',
             tokenName: 'id_token',
-            //tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
+            // tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
             globalHeaders: [{ 'Content-Type': 'application/json' }],
             noJwtError: false,
             noTokenScheme: false
@@ -34,8 +33,7 @@ import { provideAuth, AUTH_PROVIDERS } from 'angular2-jwt';
         DmlHasRolesDirective,
         DmlHasRolesDisableDirective
     ]
-
 })
-export class SecurityModule {
 
+export class SecurityModule {
 }

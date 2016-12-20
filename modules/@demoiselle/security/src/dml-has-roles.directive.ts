@@ -1,5 +1,5 @@
 import { Directive, TemplateRef, Input, ViewContainerRef } from '@angular/core';
-import {AuthService} from './auth.service';
+import { AuthService } from './auth.service';
 
 
 /**
@@ -21,9 +21,8 @@ import {AuthService} from './auth.service';
   selector: '[dmlHasRoles]'
 })
 export class DmlHasRolesDirective {
-	
-  constructor(private _viewContainer: ViewContainerRef, private _template: TemplateRef<Object>,  private authService: AuthService) {}
 
+  constructor(private _viewContainer: ViewContainerRef, private _template: TemplateRef<Object>, private authService: AuthService) { }
 
   @Input()
   set dmlHasRoles(roles: string[]) {
@@ -33,5 +32,5 @@ export class DmlHasRolesDirective {
       this._viewContainer.clear();
     }
   }
-    
+
 }

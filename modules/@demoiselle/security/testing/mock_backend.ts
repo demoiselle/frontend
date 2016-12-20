@@ -6,11 +6,11 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Injectable} from '@angular/core';
-import {Connection, ConnectionBackend, ReadyState, Request, Response} from '@angular/http';
-import {ReplaySubject} from 'rxjs/ReplaySubject';
-import {Subject} from 'rxjs/Subject';
-import {take} from 'rxjs/operator/take';
+import { Injectable } from '@angular/core';
+import { Connection, ConnectionBackend, ReadyState, Request, Response } from '@angular/http';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { Subject } from 'rxjs/Subject';
+import { take } from 'rxjs/operator/take';
 
 
 /**
@@ -52,7 +52,7 @@ export class MockConnection implements Connection {
    * ### Example
    *
    * ```
-   * var connection;
+   * let connection;
    * backend.connections.subscribe(c => connection = c);
    * http.request('data.json').subscribe(res => console.log(res.text()));
    * connection.mockRespond(new Response(new ResponseOptions({ body: 'fake response' }))); //logs
@@ -91,7 +91,7 @@ export class MockConnection implements Connection {
    * ### Example
    *
    * ```
-   * var connection;
+   * let connection;
    * backend.connections.subscribe(c => connection = c);
    * http.request('data.json').subscribe(res => res, err => console.log(err)));
    * connection.mockError(new Error('error'));
@@ -117,14 +117,14 @@ export class MockConnection implements Connection {
  * import {BaseRequestOptions, Http} from '@angular/http';
  * import {MockBackend} from '@angular/http/testing';
  * it('should get some data', inject([AsyncTestCompleter], (async) => {
- *   var connection;
- *   var injector = Injector.resolveAndCreate([
+ *   let connection;
+ *   let injector = Injector.resolveAndCreate([
  *     MockBackend,
  *     {provide: Http, useFactory: (backend, options) => {
  *       return new Http(backend, options);
  *     }, deps: [MockBackend, BaseRequestOptions]}]);
- *   var http = injector.get(Http);
- *   var backend = injector.get(MockBackend);
+ *   let http = injector.get(Http);
+ *   let backend = injector.get(MockBackend);
  *   //Assign any newly-created connection to local variable
  *   backend.connections.subscribe(c => connection = c);
  *   http.request('data.json').subscribe((res) => {
@@ -154,15 +154,15 @@ export class MockBackend implements ConnectionBackend {
    * import {Injector, provide} from '@angular/core';
    *
    * it('should get a response', () => {
-   *   var connection; //this will be set when a new connection is emitted from the backend.
-   *   var text; //this will be set from mock response
-   *   var injector = Injector.resolveAndCreate([
+   *   let connection; //this will be set when a new connection is emitted from the backend.
+   *   let text; //this will be set from mock response
+   *   let injector = Injector.resolveAndCreate([
    *     MockBackend,
    *     {provide: Http, useFactory: (backend, options) => {
    *       return new Http(backend, options);
    *     }, deps: [MockBackend, BaseRequestOptions]}]);
-   *   var backend = injector.get(MockBackend);
-   *   var http = injector.get(Http);
+   *   let backend = injector.get(MockBackend);
+   *   let http = injector.get(Http);
    *   backend.connections.subscribe(c => connection = c);
    *   http.request('something.json').subscribe(res => {
    *     text = res.text();
@@ -174,7 +174,7 @@ export class MockBackend implements ConnectionBackend {
    *
    * This property only exists in the mock implementation, not in real Backends.
    */
-  connections: any;  //<MockConnection>
+  connections: any;  // <MockConnection>
 
   /**
    * An array representation of `connections`. This array will be updated with each connection that
@@ -196,7 +196,7 @@ export class MockBackend implements ConnectionBackend {
     this.connectionsArray = [];
     this.connections = new Subject();
     this.connections.subscribe(
-        (connection: MockConnection) => this.connectionsArray.push(connection));
+      (connection: MockConnection) => this.connectionsArray.push(connection));
     this.pendingConnections = new Subject();
   }
 
@@ -208,7 +208,9 @@ export class MockBackend implements ConnectionBackend {
   verifyNoPendingRequests() {
     let pending = 0;
     this.pendingConnections.subscribe((c: MockConnection) => pending++);
-    if (pending > 0) throw new Error(`${pending} pending connections to be resolved`);
+    if (pending > 0) {
+      throw new Error(`${pending} pending connections to be resolved`);
+    }
   }
 
   /**
