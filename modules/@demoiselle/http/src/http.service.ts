@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Http, RequestOptions, ConnectionBackend, RequestOptionsArgs, Response, XHRBackend } from '@angular/http';
+import { Http, Headers, RequestOptions, ConnectionBackend, RequestOptionsArgs, Response, XHRBackend } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
-// import { Request } from '@angular/http/src/static_request';
+import { Request } from '@angular/http/src/static_request';
 import { Router } from '@angular/router';
 // import { tokenNotExpired, JwtHelper, AuthHttp } from 'angular2-jwt';
 
@@ -23,6 +23,22 @@ export class HttpService extends Http {
         if (jwtHeader != null) {
             this._defaultOptions.headers.append('Authorization', 'Token ' + jwtHeader);
         }
+    }
+
+    request(url: string | Request, options?: RequestOptionsArgs): Observable<Response> {
+        let token = localStorage.getItem(this.config.tokenKey);
+        if (typeof url === 'string') { // meaning we have to add the token to the options, not in url
+            url = this.appendEndpoint(url);
+            if (!options) {
+                // let's make option object
+                options = { headers: new Headers() };
+            }
+            options.headers.set('Authorization', `Token ${token}`);
+        } else {
+            // we have to add the token to the url object
+            url.headers.set('Authorization', `Token ${token}`);
+        }
+        return super.request(url, options);
     }
 
     post(url: string, body: any, options?: RequestOptionsArgs): Observable<Response> {
