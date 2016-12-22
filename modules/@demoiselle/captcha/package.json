@@ -1,0 +1,36 @@
+{
+  "name": "@demoiselle/captcha",
+  "version": "0.0.1",
+  "description": "Demoiselle Frontend - Captcha Component",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "author": "SERPRO",
+  "license": "MIT",
+  "peerDependencies": {
+    "rxjs": "5.0.1",
+    "@angular/core": "^2.3.0",
+    "@angular/platform-browser": "^2.3.0",
+    "@angular/http": "^2.3.0",
+    "@angular/forms": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/core": "2.3.0",
+    "@angular/platform-browser": "2.3.0",
+    "@angular/http": "2.3.0",
+    "@angular/forms": "2.3.0",
+    "@angular/router": "~3.3.0",
+    "rxjs": "5.0.1",
+    "zone.js": "0.7.2",
+    "typescript": "2.0.2",
+    "webpack": "^1.13.0",
+    "typings": "^0.7.9"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/demoiselle/frontend.git"
+  }
+}
