@@ -27,16 +27,18 @@ export class HttpService extends Http {
 
     request(url: string | Request, options?: RequestOptionsArgs): Observable<Response> {
         let token = localStorage.getItem(this.config.tokenKey);
-        if (typeof url === 'string') { // meaning we have to add the token to the options, not in url
-            url = this.appendEndpoint(url);
-            if (!options) {
-                // let's make option object
-                options = { headers: new Headers() };
+        if (token != null) {
+            if (typeof url === 'string') { // meaning we have to add the token to the options, not in url
+                url = this.appendEndpoint(url);
+                if (!options) {
+                    // let's make option object
+                    options = { headers: new Headers() };
+                }
+                options.headers.set('Authorization', `Token ${token}`);
+            } else {
+                // we have to add the token to the url object
+                url.headers.set('Authorization', `Token ${token}`);
             }
-            options.headers.set('Authorization', `Token ${token}`);
-        } else {
-            // we have to add the token to the url object
-            url.headers.set('Authorization', `Token ${token}`);
         }
         return super.request(url, options);
     }
