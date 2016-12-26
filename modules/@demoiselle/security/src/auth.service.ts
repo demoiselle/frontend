@@ -139,8 +139,9 @@ export class AuthService {
     if (this.isAuthenticated()) {
       let headers = new Headers();
       headers.append('Content-Type', 'application/json');
+      headers.set('Authorization', 'Token ' + localStorage.getItem(this.config.tokenKey));
 
-      this.authHttp.get(this.config.authEndpointUrl + 'auth', { headers: headers })
+      this.http.get(this.config.authEndpointUrl + 'auth', { headers: headers })
         .map(res => res.json())
         .subscribe((res) => {
           let token = res.token;
@@ -153,9 +154,13 @@ export class AuthService {
   /**
    * Can be initiliazed/called from app.component.ts: ngAfterContentInit()
    */
-  initializeReTokenPolling(interval: number) {
+  initializeReTokenPolling() {
+    let tokenData = this.getDataFromToken(); 
 
-    Observable.interval(interval).subscribe(() => {
+    let intervalInSeconds = tokenData.exp - tokenData.iat - 60; // one minute before expiration
+    let intervalInMiliseconds = intervalInSeconds * 1000;
+
+    Observable.interval(intervalInMiliseconds).subscribe(() => {
       this.reToken();
     });
   }

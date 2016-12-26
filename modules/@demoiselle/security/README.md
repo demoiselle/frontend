@@ -50,6 +50,15 @@ Exemplo de configuração:
     'loginRoute': '/login'
 }
 ```
+**Retoken**
+
+O re-token é utilizado para renovar o token JWT antes de sua expiração. Para ativar o re-token utilize a função de inicialização de polling de re-token. Esta função configura o polling de acordo com o tempo de expiração contido no token. Pode ser inicializado através da sua chamada em sua função app.component.ts::ngAfterContentInit():
+```
+public ngAfterContentInit():any {
+    ...
+    this.authService.initializeReTokenPolling();
+}
+```
 
 **Utilização do AuthGuard**
 
