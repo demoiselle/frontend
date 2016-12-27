@@ -1,5 +1,6 @@
 import { Directive, TemplateRef, Input, ViewContainerRef } from '@angular/core';
 import { AuthService } from './auth.service';
+import { Subscription } from 'rxjs/Subscription';
 
 
 /**
@@ -21,10 +22,25 @@ import { AuthService } from './auth.service';
 })
 export class DmlIsLoggedDirective {
 
-  constructor(private _viewContainer: ViewContainerRef, private _template: TemplateRef<Object>, private authService: AuthService) { }
+  loginSubscription: Subscription;
+	
+  constructor(private _viewContainer: ViewContainerRef, private _template: TemplateRef<Object>,  private authService: AuthService) {
+    this.loginSubscription = this.authService.loginChange$.subscribe(
+      token => this.updateView()
+    );
+  }
+
+  ngOnDestroy() {
+    this.loginSubscription.unsubscribe();
+  }
+
 
   @Input()
   set dmlIsLogged(empty: any) {
+    this.updateView();
+  }
+
+  private updateView(){
     if (this.authService.isAuthenticated()) {
       this._viewContainer.createEmbeddedView(this._template);
     } else {

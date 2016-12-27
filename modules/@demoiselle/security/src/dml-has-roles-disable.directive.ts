@@ -1,5 +1,6 @@
 import { Directive, ElementRef, Input, Renderer } from '@angular/core';
 import { AuthService } from './auth.service';
+import { Subscription } from 'rxjs/Subscription';
 
 
 /**
@@ -22,18 +23,29 @@ import { AuthService } from './auth.service';
     selector: '[dmlHasRolesDisable]'
 })
 export class DmlHasRolesDisableDirective {
+    loginSubscription: Subscription;
+    private context: DmlHasRolesDisableContext = new DmlHasRolesDisableContext();
 
-    constructor(private el: ElementRef, private renderer: Renderer, private authService: AuthService) { }
+    constructor(private el: ElementRef, private renderer: Renderer, private authService: AuthService) {
+        this.loginSubscription = this.authService.loginChange$.subscribe(
+            token => this.updateView()
+        );
+    }
 
     @Input()
     set dmlHasRolesDisable(roles: string[]) {
+        this.context.$roles = roles;
+        this.updateView();
+    }
 
-        if (!this.authService.isAuthorized(roles)) {
-            this.disableElement(this.el.nativeElement);
+    private updateView() {
+        if (this.context.$roles != null) {
+            let disabled = !this.authService.isAuthorized(this.context.$roles);
+            this.setElementDisabled(this.el.nativeElement, disabled); 
         }
     }
 
-    disableElement(element: any) {
+    setElementDisabled(element: any, disabled: boolean) {
         let tagName = element.tagName;
         if (tagName === 'INPUT' ||
             tagName === 'SELECT' ||
@@ -41,13 +53,20 @@ export class DmlHasRolesDisableDirective {
             tagName === 'BUTTON' ||
             tagName === 'A') {
 
-            this.renderer.setElementAttribute(element, 'disabled', 'true');
+            if (disabled) {
+                this.renderer.setElementAttribute(element, 'disabled', 'true');
+            } else {
+                this.renderer.setElementAttribute(element, 'disabled', null);
+            }
+            
         } else {
 
             for (let i = 0; i < element.children.length; i++) {
-                this.disableElement(element.children[i]);
+                this.setElementDisabled(element.children[i], disabled);
             }
         }
     }
 
 }
+
+export class DmlHasRolesDisableContext { public $roles: string[] = null; }

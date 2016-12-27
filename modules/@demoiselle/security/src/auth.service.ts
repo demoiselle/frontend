@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { AuthHttp, JwtHelper } from 'angular2-jwt';
 
@@ -8,6 +9,11 @@ import { AuthHttp, JwtHelper } from 'angular2-jwt';
 export class AuthService {
 
   jwtHelper: JwtHelper = new JwtHelper();
+  
+  // Observable login source
+  private loginChangeSource = new BehaviorSubject<string>('');
+  // Observable login stream
+  loginChange$ = this.loginChangeSource.asObservable();
 
   constructor(private http: Http, private authHttp: AuthHttp, private config: any) {
     // config.authEndpointUrl = config.authEndpointUrl || '';
@@ -26,6 +32,8 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem(this.config.tokenKey);
+
+    this.loginChangeSource.next('');
   }
 
   login(credentials: any) {
@@ -45,6 +53,9 @@ export class AuthService {
         let json = res.json();
         let token = json.token;
         localStorage.setItem(this.config.tokenKey, token);
+
+        this.loginChangeSource.next(token);
+
         return json;
 
       });
