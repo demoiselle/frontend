@@ -22,11 +22,11 @@ module.exports = function (config) {
 
     // list of files to exclude
     exclude: [
-      
+
       '**/node_modules/**/*.ts',
       '**/node_modules/**/*spec.ts',
       '**/node_modules/**/*spec.js'
-      
+
 
     ],
 
@@ -68,12 +68,24 @@ module.exports = function (config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: isTestWatch ? ['Chrome'] : ['PhantomJS'], 
+    // browsers: isTestWatch ? ['Chrome'] : ['PhantomJS'], 
+    browsers: ['Chrome'],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: true
+    singleRun: true,
+
+    customLaunchers: {
+      Chrome_travis_ci: {
+        base: 'Chrome',
+        flags: ['--no-sandbox']
+      }
+    },
   };
+
+  if (process.env.TRAVIS) {
+    _config.browsers = ['Chrome_travis_ci'];
+  }
 
   if (!isTestWatch) {
     _config.reporters.push("coverage");
