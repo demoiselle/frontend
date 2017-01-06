@@ -17,18 +17,9 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "angular2-jwt": "^0.1.26",
-    "@angular/core": "2.3.0",
-    "@angular/platform-browser": "2.3.0",
-    "@angular/http": "2.3.0",
-    "@angular/router": "~3.3.0"
+    "angular2-jwt": "^0.1.26"
   },
   "_peerDependencies": {
-    "rxjs": "5.0.1",
-    "@angular/core": "^2.3.0",
-    "@angular/platform-browser": "^2.3.0",
-    "@angular/http": "^2.3.0",
-    "@angular/router": "~3.3.0"
   },
   "_devDependencies": {
     "rxjs": "5.0.1",

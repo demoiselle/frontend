@@ -8,6 +8,10 @@ import { AuthHttp, JwtHelper } from 'angular2-jwt';
 @Injectable()
 export class AuthService {
 
+  private doReToken: Boolean = false;
+  private tokenInterval: any = null;
+  private reTokenInterval: any = null;
+
   jwtHelper: JwtHelper = new JwtHelper();
   
   // Observable login source
@@ -54,12 +58,17 @@ export class AuthService {
         let token = json.token;
         localStorage.setItem(this.config.tokenKey, token);
 
+        if (this.doReToken) {
+          this.setReTokenInterval();
+        } else {
+          this.setTokenInterval();
+        }
+
         this.loginChangeSource.next(token);
 
         return json;
 
       });
-
 
   }
 
@@ -157,7 +166,8 @@ export class AuthService {
         .subscribe((res) => {
           let token = res.token;
           localStorage.setItem(this.config.tokenKey, token);
-
+          this.unsetReTokenInterval();
+          this.setReTokenInterval();
         });
     }
   }
@@ -166,14 +176,48 @@ export class AuthService {
    * Can be initiliazed/called from app.component.ts: ngAfterContentInit()
    */
   initializeReTokenPolling() {
+    this.doReToken = true;
+  }
+
+  setTokenInterval() {
     let tokenData = this.getDataFromToken(); 
+    if (tokenData) {
+      let intervalInSeconds = tokenData.exp - tokenData.iat;
+      let intervalInMiliseconds = intervalInSeconds * 1000;
 
-    let intervalInSeconds = tokenData.exp - tokenData.iat - 60; // one minute before expiration
-    let intervalInMiliseconds = intervalInSeconds * 1000;
+      this.tokenInterval = Observable.interval(intervalInMiliseconds).subscribe(() => {
+        this.unsetTokenInterval();
+      });
+    }
+  }
 
-    Observable.interval(intervalInMiliseconds).subscribe(() => {
-      this.reToken();
-    });
+  unsetTokenInterval() {
+    if (this.tokenInterval) {
+      this.tokenInterval.unsubscribe();
+      this.tokenInterval = null;
+    }
+    if (localStorage && localStorage.getItem(this.config.tokenKey)) {
+      localStorage.removeItem(this.config.tokenKey);
+    }
+  }
+
+  setReTokenInterval() {
+    let tokenData = this.getDataFromToken(); 
+    if (tokenData) {
+      let intervalInSeconds = tokenData.exp - tokenData.iat - 60; // one minute before expiration
+      let intervalInMiliseconds = intervalInSeconds * 1000;
+
+      this.reTokenInterval = Observable.interval(intervalInMiliseconds).subscribe(() => {
+        this.reToken();
+      });
+    }
+  }
+
+  unsetReTokenInterval() {
+    if (this.reTokenInterval) {
+      this.reTokenInterval.unsubscribe();
+      this.reTokenInterval = null;
+    }
   }
 }
 
