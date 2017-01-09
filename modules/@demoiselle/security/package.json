@@ -17,13 +17,17 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "angular2-jwt": "^0.1.26"
+    "rxjs": "5.0.0-rc.4",
+    "@angular/common": "2.3.1",
+    "@angular/core": "2.3.1",
+    "@angular/http": "2.3.1",
+    "@angular/platform-browser": "2.3.1",
+    "zone.js": "^0.7.2",
+    "angular2-jwt": "^0.1.27"
   },
   "_peerDependencies": {
   },
   "_devDependencies": {
-    "rxjs": "5.0.1",
-    "zone.js": "0.7.2",
     "typescript": "2.0.2",
     "webpack": "^1.13.0",
     "typings": "^0.7.9"
