@@ -13,7 +13,7 @@ export class AuthService {
   private reTokenInterval: any = null;
 
   jwtHelper: JwtHelper = new JwtHelper();
-  
+
   // Observable login source
   private loginChangeSource = new BehaviorSubject<string>('');
   // Observable login stream
@@ -41,12 +41,11 @@ export class AuthService {
   }
 
   login(credentials: any) {
+    let url = this.config.authEndpointUrl + this.config.loginResourcePath;
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
-
-    return this.http.post(this.config.authEndpointUrl + this.config.loginResourcePath,
-      JSON.stringify(credentials),
-      { headers: headers })
+    
+    return this.http.post(url, JSON.stringify(credentials), { headers: headers })
       .map((res) => {
         // ** located in header response
         // let responseHeaders = res.headers;
@@ -180,7 +179,7 @@ export class AuthService {
   }
 
   setTokenInterval() {
-    let tokenData = this.getDataFromToken(); 
+    let tokenData = this.getDataFromToken();
     if (tokenData) {
       let intervalInSeconds = tokenData.exp - tokenData.iat;
       let intervalInMiliseconds = intervalInSeconds * 1000;
@@ -202,7 +201,7 @@ export class AuthService {
   }
 
   setReTokenInterval() {
-    let tokenData = this.getDataFromToken(); 
+    let tokenData = this.getDataFromToken();
     if (tokenData) {
       let intervalInSeconds = tokenData.exp - tokenData.iat - 60; // one minute before expiration
       let intervalInMiliseconds = intervalInSeconds * 1000;
