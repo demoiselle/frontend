@@ -28,13 +28,17 @@ export class AuthGuard implements CanActivate {
         }
 
         let loginRoute = this.authService.getLoginRoute();
-        if (typeof loginRoute === 'string') {
-            this.router.navigate([loginRoute]);
+        let typeOfLoginRoute = (typeof loginRoute);
+        switch (typeOfLoginRoute) {
+            case 'function':
+                loginRoute();
+                break;
+            // case 'string':
+            default:
+                this.router.navigate([loginRoute]);
+                break;
         }
 
-        if (typeof loginRoute === 'function') {
-            loginRoute();
-        }
         return false;
     }
 }

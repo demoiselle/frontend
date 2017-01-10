@@ -69,7 +69,17 @@ export class HttpService extends Http {
     intercept(observable: Observable<Response>): Observable<Response> {
         return observable.catch((err, source) => {
             if (err.status === 401) { // && !_.endsWith(err.url, '/login')) {
-                this.router.navigate([this.config.unAuthorizedRoute]);
+                let typeOfUnauthorizedRoute = typeof this.config.unAuthorizedRoute;
+                switch (typeOfUnauthorizedRoute) {
+                    case 'function':
+                        this.config.unAuthorizedRoute();
+                        break;
+                    // case 'string'
+                    default:
+                        this.router.navigate([this.config.unAuthorizedRoute]);
+                        break;
+                }
+                // this.router.navigate([this.config.unAuthorizedRoute]);
                 return Observable.empty();
             } else if (err.status === 412 || err.status === 422) {
                 // TODO: Tratamento da validação ??? 
