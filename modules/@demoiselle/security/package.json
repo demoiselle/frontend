@@ -19,13 +19,8 @@
   "dependencies": {
     "angular2-jwt": "^0.1.27"
   },
-  "_peerDependencies": {
-  },
-  "_devDependencies": {
-    "typescript": "2.0.2",
-    "webpack": "^1.13.0",
-    "typings": "^0.7.9"
-  },
+  "peerDependencies": {},
+  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/demoiselle/frontend.git"
