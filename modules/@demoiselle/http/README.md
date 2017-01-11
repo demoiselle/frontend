@@ -18,7 +18,7 @@ npm install --save @demoiselle/http
 Adicionar o serviço aos providers da aplicação principal (ou alternativamente no `CoreModule`), através da chamada a função `HttpServiceProvider`:
 
 ```javascript
-import {HttpServiceProvider} from '@demoiselle/http';
+import { HttpServiceProvider } from '@demoiselle/http';
 // ...código resumido
 
 @NgModule({
@@ -40,10 +40,10 @@ export class AppModule {
 
 ### Exemplo - GET Request
 
-Para fazer as requisições, utilize o serviço `Http` do angular:
+Para fazer as requisições, use o serviço `Http` do angular:
 
 ```javascript
-import { Http} from '@angular/http';
+import { Http } from '@angular/http';
 
 constructor(private http: Http) {}
 
@@ -61,6 +61,7 @@ this.http.get('~main/users');
 - **_tokenKey_**: chave localstorage para acesso ao token jwt 
 
 ### Exemplo de configuração
+
 ```javascript
 {
     endpoints : {

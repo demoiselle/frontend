@@ -1,71 +1,105 @@
-Security Module
-=======
+# Security Module
+
 O módulo Security disponibiliza os seguintes serviços/componentes:
 * AuthService: Provê serviços de autenticação e autorização baseado nas informações do token vindo do backend Demoiselle;
 * AuthGuard: Serviço que intercepta acesso as rotas e redireciona para a página de login caso a autenticação seja requerida;
 * Diretivas de segurança: Diretivas para exibição de conteúdo de acordo com autenticação/autorização;
 
-**Utilização**
-```
+
+## Instalaçao
+
+```bash
 npm install --save @demoiselle/security
 ```
 
+
+## Utilização
+
 Adicionar o serviço de autenticação aos providers da aplicação principal (ou alternativamente no CoreModule), através da chamada a função AuthServiceProvider:
-```
-import {AuthServiceProvider} from '@demoiselle/security';
-...
+
+```javascript
+import { AuthServiceProvider } from '@demoiselle/security';
+// ...código resumido
+
 @NgModule({
-...
+// ...código resumido
 providers: [
     AuthServiceProvider({
-          'authEndpointUrl': 'http://localhost:9090/app/api/v1/'
-          'loginResourcePath': 'auth/login',
-          'tokenKey': 'id_token',
-          'loginRoute': '/login'
+          authEndpointUrl: 'http://localhost:9090/app/api/v1/'
+          loginResourcePath: 'auth/login',
+          tokenKey: 'id_token',
+          loginRoute: '/login'
         }),
-    ...
+    // ...código resumido
 ]})
-export class AppModule {..}
-```
-Utilizando o serviço para realizar o login:
-```
-import { AuthService} from '@angular/security';
-constructor(private authService: AuthService) {}
-...
-this.authService.login(this.user).subscribe(res => {//success});
-```
-
-**Configuração do AuthServiceProvider:**
- - authEndpointUrl: string com o endereço do serviço que irá realizar a autenticação;
- - loginResourcePath: string com o caminho do recurso que responde pela operação de login no backend;
- - tokenKey : chave localstorage para acesso ao token jwt;
- - loginRoute: string com a rota que apresenta a tela de login na aplicação;
-
-Exemplo de configuração:
-```
-{
-    'authEndpointUrl': '~user/', // ou no formato 'http://localhost:9090/app/api/v1/'
-    'loginResourcePath': 'auth/login',
-    'tokenKey': 'id_token',
-    'loginRoute': '/login'
+export class AppModule {
+    //...código resumido
 }
 ```
-**Retoken**
 
-O re-token é utilizado para renovar o token JWT antes de sua expiração. Para ativar o re-token utilize a função de inicialização de polling de re-token. Esta função configura o polling de acordo com o tempo de expiração contido no token. Pode ser inicializado através da sua chamada em sua função app.component.ts::ngAfterContentInit():
+
+### Exemplo - Login
+
+Utilizando o serviço para realizar o login:
+
+```javascript
+import { AuthService } from '@angular/security';
+
+constructor(private authService: AuthService) {}
+
+// ...código resumido
+
+this.authService.login(this.user)
+    .subscribe(res => {
+        // Usuário autenticado!
+        console.log('Token:', res);
+    });
 ```
+
+
+## Configuração do AuthServiceProvider
+
+- **_authEndpointUrl_**: string com o endereço do serviço que irá realizar a autenticação;
+- **_loginResourcePath_**: string com o caminho do recurso que responde pela operação de login no backend;
+- **_tokenKey_** : chave localstorage para acesso ao token jwt;
+- **_loginRoute_**: string com a rota que apresenta a tela de login na aplicação;
+
+### Exemplo de configuração
+
+```javascript
+{
+    authEndpointUrl: '~user/', // ou no formato 'http://localhost:9090/app/api/v1/'
+    loginResourcePath: 'auth/login',
+    tokenKey: 'id_token',
+    loginRoute: '/login'
+}
+```
+
+## ReToken
+
+O **ReToken** é utilizado para renovar o token JWT antes de sua expiração.
+Para ativar o **ReToken** use a função de inicialização de polling de **ReToken**.
+Esta função configura o polling de acordo com o tempo de expiração contido no token.
+Pode ser inicializado através da sua chamada em sua função `app.component.ts::ngAfterContentInit()`.
+
+Exemplo:
+
+```javascript
 public ngAfterContentInit():any {
-    ...
+    // ...código resumido
     this.authService.initializeReTokenPolling();
 }
 ```
 
-**Utilização do AuthGuard**
+## AuthGuard
 
-Adicione o AuthGuard na configuração de rotas para exigir autenticação. Para isso utilize o atributo 'canActivate':
-```
-import {AuthGuard} from '@demoiselle/security';
-...
+Adicione o **AuthGuard** na configuração de rotas para exigir autenticação.
+Para isso use o atributo `canActivate`:
+
+```javascript
+import { AuthGuard } from '@demoiselle/security';
+
+// ...código resumido
 { 
     path: 'usuario/edit/:id',
     canActivate: [AuthGuard],
@@ -74,17 +108,24 @@ import {AuthGuard} from '@demoiselle/security';
 
 ```
 
-**Utilização das diretivas de segurança**
+## Utilização das diretivas de segurança
 
-Importe o módulo de segurança em sua aplicação e utilize as diretivas em seus templates:
-```
+1. Importe o módulo de segurança em sua aplicação;
+2. Use as diretivas em seus templates HTML.
+
+```javascript
+// Importe #1
 import { SecurityModule } from '@demoiselle/security';
+
 @NgModule({
-  imports: [SecurityModule],
-  ...
+    // Importe #2
+    imports: [SecurityModule],
+
+    // ...código resumido
 })
+```
 
-Template:
+```html
+<!-- Use no seu template HTML -->
 <div id="sidebar-menu" *dmlHasRoles="['ADMINISTRATOR']">
-
 ```
