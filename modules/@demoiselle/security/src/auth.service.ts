@@ -8,6 +8,7 @@ import { AuthHttp, JwtHelper } from 'angular2-jwt';
 @Injectable()
 export class AuthService {
 
+  private token: string = null;
   private doReToken: Boolean = false;
   private tokenInterval: any = null;
   private reTokenInterval: any = null;
@@ -24,6 +25,43 @@ export class AuthService {
     config.loginResourcePath = config.loginResourcePath || 'auth/login';
     config.tokenKey = config.tokenKey || 'id_token';
     config.loginRoute = config.loginRoute || '/login';
+
+    if (!config.tokenGetter) {
+      config.tokenGetter = () => localStorage.getItem(config.tokenKey) as string;
+    }
+    if (!config.tokenSetter) {
+      config.tokenSetter = (val: string) => localStorage.setItem(config.tokenKey, val)
+    }
+    if (!config.tokenRemover) {
+      config.tokenRemover = () => localStorage.removeItem(config.tokenKey)
+    }
+
+    this.initializeToken();
+  }
+
+  initializeToken() {
+    let jwtToken = this.config.tokenGetter(); 
+    if (jwtToken instanceof Promise) {
+      jwtToken.then((tokenFromPromise: string) => {
+          this.token = tokenFromPromise
+      });
+    } else {
+      this.token = jwtToken;
+    }
+  }
+
+  setToken(token: string) {
+    this.config.tokenSetter(token);
+    this.token = token;
+  }
+
+  removeToken() {
+    this.config.tokenRemover();
+    this.token = null;
+  }
+
+  public getToken() {
+    return this.token;
   }
 
   public getLoginRoute() {
@@ -31,11 +69,12 @@ export class AuthService {
   }
 
   isAuthenticated() {
-    return (localStorage.getItem(this.config.tokenKey) !== null);
+    return (this.token !== null);
   }
 
   logout() {
-    localStorage.removeItem(this.config.tokenKey);
+    //localStorage.removeItem(this.config.tokenKey);
+    this.removeToken();
 
     this.loginChangeSource.next('');
   }
@@ -55,7 +94,8 @@ export class AuthService {
         // ** located in body response
         let json = res.json();
         let token = json.token;
-        localStorage.setItem(this.config.tokenKey, token);
+        //localStorage.setItem(this.config.tokenKey, token);
+        this.setToken(token);
 
         if (this.doReToken) {
           this.setReTokenInterval();
@@ -109,10 +149,9 @@ export class AuthService {
 }
   */
   getDataFromToken() {
-    let token = localStorage.getItem(this.config.tokenKey);
     let data: any = null;
-    if (token !== null && typeof token !== undefined) {
-      data = this.jwtHelper.decodeToken(token);
+    if (this.token !== null && typeof this.token !== undefined) {
+      data = this.jwtHelper.decodeToken(this.token);
     }
     return data;
   }
@@ -158,13 +197,14 @@ export class AuthService {
     if (this.isAuthenticated()) {
       let headers = new Headers();
       headers.append('Content-Type', 'application/json');
-      headers.set('Authorization', 'Token ' + localStorage.getItem(this.config.tokenKey));
+      headers.set('Authorization', 'Token ' + this.token);
 
       this.http.get(this.config.authEndpointUrl + 'auth', { headers: headers })
         .map(res => res.json())
         .subscribe((res) => {
           let token = res.token;
-          localStorage.setItem(this.config.tokenKey, token);
+          //localStorage.setItem(this.config.tokenKey, token);
+          this.setToken(token);
           this.unsetReTokenInterval();
           this.setReTokenInterval();
         });
@@ -195,8 +235,9 @@ export class AuthService {
       this.tokenInterval.unsubscribe();
       this.tokenInterval = null;
     }
-    if (localStorage && localStorage.getItem(this.config.tokenKey)) {
-      localStorage.removeItem(this.config.tokenKey);
+    if (this.token !== null) {
+      //localStorage.removeItem(this.config.tokenKey);
+      this.removeToken();
     }
   }
 

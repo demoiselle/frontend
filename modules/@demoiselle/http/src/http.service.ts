@@ -3,7 +3,6 @@ import { Http, Headers, RequestOptions, ConnectionBackend, RequestOptionsArgs, R
 import { Observable } from 'rxjs/Rx';
 import { Request } from '@angular/http/src/static_request';
 import { Router } from '@angular/router';
-// import { tokenNotExpired, JwtHelper, AuthHttp } from 'angular2-jwt';
 
 @Injectable()
 export class HttpService extends Http {
@@ -19,14 +18,18 @@ export class HttpService extends Http {
         config.unAuthorizedRoute = config.unAuthorizedRoute || '/login';
         config.tokenKey = config.tokenKey || 'id_token';
 
-        let jwtHeader = localStorage.getItem(config.tokenKey);
-        if (jwtHeader != null) {
-            this._defaultOptions.headers.append('Authorization', 'Token ' + jwtHeader);
+        if (!config.tokenGetter) {
+            config.tokenGetter = () => localStorage.getItem(config.tokenKey) as string;
         }
+
+        // let jwtHeader = localStorage.getItem(config.tokenKey);
+        // if (jwtHeader != null) {
+        //     this._defaultOptions.headers.append('Authorization', 'Token ' + jwtHeader);
+        // }
     }
 
-    request(url: string | Request, options?: RequestOptionsArgs): Observable<Response> {
-        let token = localStorage.getItem(this.config.tokenKey);
+    private requestWithToken(token: string, url: string | Request, options?: RequestOptionsArgs): Observable<Response> {
+        
         if (token != null) {
             if (typeof url === 'string') { // meaning we have to add the token to the options, not in url
                 url = this.appendEndpoint(url);
@@ -40,7 +43,18 @@ export class HttpService extends Http {
                 url.headers.set('Authorization', `Token ${token}`);
             }
         }
+        
         return super.request(url, options);
+    }
+
+    request(url: string | Request, options?: RequestOptionsArgs): Observable<Response> {
+        let token = this.config.tokenGetter();
+        if (token instanceof Promise) {
+            return Observable.fromPromise(token).mergeMap((jwtToken: string) => this.requestWithToken(jwtToken, url, options));
+        } else {
+            return this.requestWithToken(token, url, options);
+        }
+
     }
 
     post(url: string, body: any, options?: RequestOptionsArgs): Observable<Response> {
