@@ -94,10 +94,9 @@ export class HttpService extends Http {
                         break;
                 }
                 // this.router.navigate([this.config.unAuthorizedRoute]);
-                return Observable.empty();
+                return Observable.throw(err);
             } else if (err.status === 412 || err.status === 422) {
                 // TODO: Tratamento da validação ??? 
-                alert('Erro de validação! Favor corrigir os campos com problema');
                 return Observable.throw(err);
             } else {
                 return Observable.throw(err);
