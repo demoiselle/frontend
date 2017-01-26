@@ -9,7 +9,6 @@ import { AuthHttp, JwtHelper } from 'angular2-jwt';
 export class AuthService {
 
   private token: string = null;
-  private doReToken: Boolean = false;
   private tokenInterval: any = null;
   private reTokenInterval: any = null;
 
@@ -25,6 +24,7 @@ export class AuthService {
     config.loginResourcePath = config.loginResourcePath || 'auth/login';
     config.tokenKey = config.tokenKey || 'id_token';
     config.loginRoute = config.loginRoute || '/login';
+    config.doReToken = config.doReToken || false;
 
     if (!config.tokenGetter) {
       config.tokenGetter = () => localStorage.getItem(config.tokenKey) as string;
@@ -43,10 +43,12 @@ export class AuthService {
     let jwtToken = this.config.tokenGetter(); 
     if (jwtToken instanceof Promise) {
       jwtToken.then((tokenFromPromise: string) => {
-          this.token = tokenFromPromise
+          this.token = tokenFromPromise;
+          this.reToken();
       });
     } else {
       this.token = jwtToken;
+      this.reToken();
     }
   }
 
@@ -97,7 +99,7 @@ export class AuthService {
         //localStorage.setItem(this.config.tokenKey, token);
         this.setToken(token);
 
-        if (this.doReToken) {
+        if (this.config.doReToken) {
           this.setReTokenInterval();
         } else {
           this.setTokenInterval();
@@ -110,44 +112,7 @@ export class AuthService {
       });
 
   }
-
-  /**
-   * getUserFromToken demoiselle 2.5 backend
-   */
-  // getUserFromToken25() {
-  //   let data = this.getDataFromToken();
-  //   return JSON.parse(data.user);
-  // }
-
-
-  /* demoiselle 3 backend jwttoken
-  {
-  "iss": "APP",
-  "aud": "web",
-  "exp": 1478863521,
-  "jti": "2384598374593874",
-  "iat": 1478863221,
-  "nbf": 1478863161,
-  "identity": "1",
-  "name": "Demoiselle",
-  "roles": [
-    "ADMINISTRATOR"
-  ],
-  "permissions": {
-    "SWAGGER": [
-      "LIST"
-    ]
-  },
-  "params": {
-    "Fone": [
-      null
-    ],
-    "Email": [
-      "admin@demoiselle.org"
-    ]
-  }
-}
-  */
+  
   getDataFromToken() {
     let data: any = null;
     if (this.token !== null && typeof this.token !== undefined) {
@@ -193,8 +158,12 @@ export class AuthService {
     return hasAuthorizedRole;
   }
 
+  /**
+   * Performs the reToken process if active
+   * Gets a new token from backend and schedule a new reToken 
+   */
   reToken() {
-    if (this.isAuthenticated()) {
+    if (this.config.doReToken && this.isAuthenticated()) {
       let headers = new Headers();
       headers.append('Content-Type', 'application/json');
       headers.set('Authorization', 'Token ' + this.token);
@@ -212,10 +181,12 @@ export class AuthService {
   }
 
   /**
+   * Activate the ReToken polling
    * Can be initiliazed/called from app.component.ts: ngAfterContentInit()
+   * @deprecated Use AuthServiceProvider config instead
    */
   initializeReTokenPolling() {
-    this.doReToken = true;
+    this.config.doReToken = true;
   }
 
   setTokenInterval() {
