@@ -77,17 +77,17 @@ this.authService.login(this.user)
 
 ## ReToken
 
-O **ReToken** é utilizado para renovar o token JWT antes de sua expiração.
-Para ativar o **ReToken** use a função de inicialização de polling de **ReToken**.
-Esta função configura o polling de acordo com o tempo de expiração contido no token.
-Pode ser inicializado através da sua chamada em sua função `app.component.ts::ngAfterContentInit()`.
+O **ReToken** é utilizado para renovar o token JWT automaticamente antes de sua expiração. O intervalo de ReToken é calculado a partir das informações do token (atributos 'exp' e 'iat'). Caso não seja ativado, após a expiração do Token o usuário será redirecionado para a tela de login da aplicação.
 
-Exemplo:
+Para informações sobre configuração e implementação de segurança com Token JWT no backend Demoiselle consulte a [Documentação JWT Backend](https://demoiselle.gitbooks.io/documentacao-jee/content/jwt.html).
+
+Para ativar, use a propriedade _doReToken_ na configuração do AuthServiceProvider:
 
 ```javascript
-public ngAfterContentInit():any {
-    // ...código resumido
-    this.authService.initializeReTokenPolling();
+{
+    ...
+    doReToken: true,
+    ...
 }
 ```
 
