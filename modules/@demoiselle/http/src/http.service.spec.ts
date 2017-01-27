@@ -16,6 +16,7 @@ describe('Http Service', () => {
                     active: false
                 },
                 unAuthorizedRoute: '/login',
+                forbiddenRoute: '/login',
                 tokenKey: 'id_token'
             })]
         });

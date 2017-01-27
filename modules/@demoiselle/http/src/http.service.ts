@@ -16,6 +16,7 @@ export class HttpService extends Http {
         config.endpoints = config.endpoints || {};
         config.multitenancy = config.multitenancy || { 'active': false };
         config.unAuthorizedRoute = config.unAuthorizedRoute || '/login';
+        config.forbiddenRoute = config.forbiddenRoute || '/login';
         config.tokenKey = config.tokenKey || 'id_token';
 
         if (!config.tokenGetter) {
@@ -82,18 +83,27 @@ export class HttpService extends Http {
 
     intercept(observable: Observable<Response>): Observable<Response> {
         return observable.catch((err, source) => {
-            if (err.status === 401) { // && !_.endsWith(err.url, '/login')) {
+            if (err.status === 401) {
                 let typeOfUnauthorizedRoute = typeof this.config.unAuthorizedRoute;
                 switch (typeOfUnauthorizedRoute) {
                     case 'function':
                         this.config.unAuthorizedRoute();
                         break;
-                    // case 'string'
                     default:
                         this.router.navigate([this.config.unAuthorizedRoute]);
                         break;
                 }
-                // this.router.navigate([this.config.unAuthorizedRoute]);
+                return Observable.throw(err);
+            } else if (err.status === 403) {
+                let typeOfForbiddenRoute = typeof this.config.forbiddenRoute;
+                switch (typeOfForbiddenRoute) {
+                    case 'function':
+                        this.config.forbiddenRoute();
+                        break;
+                    default:
+                        this.router.navigate([this.config.forbiddenRoute]);
+                        break;
+                }
                 return Observable.throw(err);
             } else if (err.status === 412 || err.status === 422) {
                 // TODO: Tratamento da validação ??? 
@@ -163,7 +173,8 @@ export class HttpService extends Http {
  * Config attributes:
  * - endpoints: object with a list of endpoints available for the app
  * - multitenancy: multitenancy configuration
- * - unAuthorizedRoute: string value for unauthorized redirection route
+ * - unAuthorizedRoute: string value or callback for unauthorized redirection route
+ * - forbiddenRoute: string value or callback for forbidden redirection route
  * Example:
  * {
  *  'endpoints' : { 
@@ -175,6 +186,7 @@ export class HttpService extends Http {
  *      'apiUrl': 'http://localhost:9090/users/api/v1/'
  *  },
  *  'unAuthorizedRoute' : '/login',
+ *  'forbiddenRoute' : '/login',
  *  'tokenKey' : 'id_token'
  * }
  *  

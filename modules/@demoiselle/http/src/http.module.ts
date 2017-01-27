@@ -12,6 +12,7 @@ import { HttpServiceProvider } from './http.service';
                 'active': false
             },
             'unAuthorizedRoute': '/login',
+            'forbiddenRoute': '/login',
             'tokenKey': 'id_token'
         })
     ]
