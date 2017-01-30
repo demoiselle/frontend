@@ -41,10 +41,9 @@ export class DmlIsLoggedDirective {
   }
 
   private updateView(){
+    this._viewContainer.clear();
     if (this.authService.isAuthenticated()) {
       this._viewContainer.createEmbeddedView(this._template);
-    } else {
-      this._viewContainer.clear();
     }
   }
 

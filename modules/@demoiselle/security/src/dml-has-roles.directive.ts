@@ -44,10 +44,9 @@ export class DmlHasRolesDirective {
 
   private updateView() {
     if (this.context.$roles != null) {
+      this._viewContainer.clear();
       if (this.authService.isAuthorized(this.context.$roles)) {
         this._viewContainer.createEmbeddedView(this._template);
-      } else {
-        this._viewContainer.clear();
       }
     }
   }
