@@ -1,11 +1,21 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, ConnectionBackend, RequestOptionsArgs, Response, XHRBackend } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
+import { Observable, BehaviorSubject } from 'rxjs/Rx';
 import { Request } from '@angular/http/src/static_request';
 import { Router } from '@angular/router';
 
 @Injectable()
 export class HttpService extends Http {
+
+    /**
+     * Observable server validation source
+     */
+    private validationSource = new BehaviorSubject<any>({});
+
+    /**
+     * Observable server validation stream
+     */
+    validation$ = this.validationSource.asObservable();
 
     /**
      * Constructor
@@ -106,7 +116,7 @@ export class HttpService extends Http {
                 }
                 return Observable.throw(err);
             } else if (err.status === 412 || err.status === 422) {
-                // TODO: Tratamento da validação ??? 
+                this.processValidation(err); 
                 return Observable.throw(err);
             } else {
                 return Observable.throw(err);
@@ -163,6 +173,24 @@ export class HttpService extends Http {
 
         }
         return url;
+    }
+
+    /**
+     * Process validation error messages and notify validation$ subscribers
+     */
+    private processValidation(error: any) {
+      if (error.status === 412) {
+          let errorsBody = error._body || '[]';
+          let errors = JSON.parse(errorsBody);
+          for (let err of errors) {
+            let parts = err.error.split('.');
+            err.error_method = parts[0] || null;
+            err.error_entity = parts[1] || null;
+            err.error_field  = parts[2] || null;
+          }
+          
+          this.validationSource.next(errors);
+        }
     }
 }
 
