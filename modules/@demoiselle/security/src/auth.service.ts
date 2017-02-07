@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Headers, Http } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Router } from '@angular/router';
 
 import { AuthHttp, JwtHelper } from 'angular2-jwt';
 
@@ -19,7 +20,10 @@ export class AuthService {
   // Observable login stream
   loginChange$ = this.loginChangeSource.asObservable();
 
-  constructor(private http: Http, private authHttp: AuthHttp, private config: any) {
+  // Url for redirection after login
+  public redirectUrl: string = '';
+
+  constructor(private http: Http, private authHttp: AuthHttp, private router: Router, private config: any) {
     // config.authEndpointUrl = config.authEndpointUrl || '';
     config.loginResourcePath = config.loginResourcePath || 'auth/login';
     config.tokenKey = config.tokenKey || 'id_token';
@@ -104,9 +108,9 @@ export class AuthService {
         } else {
           this.setTokenInterval();
         }
-
         this.loginChangeSource.next(token);
-
+        this.router.navigate([ this.redirectUrl ]);
+        
         return json;
 
       });
@@ -235,7 +239,7 @@ export class AuthService {
 export function AuthServiceProvider(config: any) {
   return {
     provide: AuthService,
-    useFactory: (http: Http, authHttp: AuthHttp) => new AuthService(http, authHttp, config),
-    deps: [Http, AuthHttp]
+    useFactory: (http: Http, authHttp: AuthHttp, router: Router) => new AuthService(http, authHttp, router, config),
+    deps: [Http, AuthHttp, Router]
   };
 }
