@@ -1,6 +1,6 @@
 {
   "name": "@demoiselle/security",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "Demoiselle Frontend security module",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

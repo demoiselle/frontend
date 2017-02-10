@@ -9,7 +9,14 @@ import { AuthHttp, JwtHelper } from 'angular2-jwt';
 @Injectable()
 export class AuthService {
 
-  private token: string = null;
+  /**
+   * Token structure
+   * {
+   *    type: 'string',
+   *    key: 'string'
+   * }
+   */
+  private token: any = null;
   private tokenInterval: any = null;
   private reTokenInterval: any = null;
 
@@ -44,20 +51,40 @@ export class AuthService {
   }
 
   initializeToken() {
-    let jwtToken = this.config.tokenGetter(); 
-    if (jwtToken instanceof Promise) {
-      jwtToken.then((tokenFromPromise: string) => {
-          this.token = tokenFromPromise;
+    let tokenString = this.config.tokenGetter(); 
+    if (tokenString instanceof Promise) {
+      tokenString.then((tokenFromPromise: string) => {
+          this.token = this.tokenFromString(tokenFromPromise);
           this.reToken();
       });
     } else {
-      this.token = jwtToken;
+      this.token = this.tokenFromString(tokenString);
       this.reToken();
     }
   }
 
-  setToken(token: string) {
-    this.config.tokenSetter(token);
+  private tokenFromString(tokenString: string) {
+
+    if (tokenString !== null && tokenString !== undefined) {
+      let type = tokenString.split(' ')[0];
+      let key = tokenString.substring(type.length + 1);
+      return {
+          type: type,
+          key: key
+      };
+    } else {
+      return null;
+    }
+
+  }
+
+  /**
+   * Set token in storage in the form "TokenType TokenKey" ex: "JWT tokencontentkey"
+   * Also keeps it in memory -> this.token 
+   */
+  setToken(token: any) {
+    let tokenString = token.type + ' ' + token.key;
+    this.config.tokenSetter(tokenString);
     this.token = token;
   }
 
@@ -67,7 +94,7 @@ export class AuthService {
   }
 
   public getToken() {
-    return this.token;
+    return this.token.key;
   }
 
   public getLoginRoute() {
@@ -99,7 +126,11 @@ export class AuthService {
 
         // ** located in body response
         let json = res.json();
-        let token = json.token;
+        let token = {
+          type: json.type,
+          key: json.key
+        };
+        
         //localStorage.setItem(this.config.tokenKey, token);
         this.setToken(token);
 
@@ -108,7 +139,7 @@ export class AuthService {
         } else {
           this.setTokenInterval();
         }
-        this.loginChangeSource.next(token);
+        this.loginChangeSource.next(token.key);
         this.router.navigate([ this.redirectUrl ]);
         
         return json;
@@ -120,7 +151,7 @@ export class AuthService {
   getDataFromToken() {
     let data: any = null;
     if (this.token !== null && typeof this.token !== undefined) {
-      data = this.jwtHelper.decodeToken(this.token);
+      data = this.jwtHelper.decodeToken(this.token.key);
     }
     return data;
   }
@@ -170,12 +201,17 @@ export class AuthService {
     if (this.config.doReToken && this.isAuthenticated()) {
       let headers = new Headers();
       headers.append('Content-Type', 'application/json');
-      headers.set('Authorization', 'Token ' + this.token);
+      headers.set('Authorization', this.token.type + ' ' + this.token.key);
 
       this.http.get(this.config.authEndpointUrl + 'auth', { headers: headers })
         .map(res => res.json())
         .subscribe((res) => {
-          let token = res.token;
+          
+          let token = {
+            type: res.type,
+            key: res.key
+          };
+
           //localStorage.setItem(this.config.tokenKey, token);
           this.setToken(token);
           this.unsetReTokenInterval();

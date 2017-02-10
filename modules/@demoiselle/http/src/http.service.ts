@@ -42,16 +42,20 @@ export class HttpService extends Http {
     private requestWithToken(token: string, url: string | Request, options?: RequestOptionsArgs): Observable<Response> {
         
         if (token != null) {
-            if (typeof url === 'string') { // meaning we have to add the token to the options, not in url
-                url = this.appendEndpoint(url);
-                if (!options) {
-                    // let's make option object
-                    options = { headers: new Headers() };
+            let tokenType = token.split(' ')[0];
+            let tokenKey = token.substring(tokenType.length + 1);
+            if (tokenType.length > 0 && tokenKey.length > 0) { 
+                if (typeof url === 'string') { // meaning we have to add the token to the options, not in url
+                    url = this.appendEndpoint(url);
+                    if (!options) {
+                        // let's make option object
+                        options = { headers: new Headers() };
+                    }
+                    options.headers.set('Authorization', `${tokenType} ${tokenKey}`);
+                } else {
+                    // we have to add the token to the url object
+                    url.headers.set('Authorization', `${tokenType} ${tokenKey}`);
                 }
-                options.headers.set('Authorization', `Token ${token}`);
-            } else {
-                // we have to add the token to the url object
-                url.headers.set('Authorization', `Token ${token}`);
             }
         }
         
