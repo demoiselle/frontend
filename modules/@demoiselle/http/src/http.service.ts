@@ -18,6 +18,17 @@ export class HttpService extends Http {
     validation$ = this.validationSource.asObservable();
 
     /**
+     * Observable source for general errors
+     */
+    private generalErrorsSource = new BehaviorSubject<any>({});
+
+    /**
+     * Observable stream for general errors (400, 500 ...)
+     */
+    generalErrors$ = this.generalErrorsSource.asObservable();
+
+
+    /**
      * Constructor
      */
     constructor(_backend: ConnectionBackend, _defaultOptions: RequestOptions, private router: Router, private config: any) {
@@ -123,6 +134,9 @@ export class HttpService extends Http {
                 this.processValidation(err); 
                 return Observable.throw(err);
             } else {
+                let errorsBody = err._body || '[]';
+                let errors = JSON.parse(errorsBody);
+                this.generalErrorsSource.next(errors);
                 return Observable.throw(err);
             }
         });
