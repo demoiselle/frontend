@@ -3,35 +3,21 @@ import { Http, Headers, RequestOptions, ConnectionBackend, RequestOptionsArgs, R
 import { Observable, BehaviorSubject } from 'rxjs/Rx';
 import { Request } from '@angular/http/src/static_request';
 import { Router } from '@angular/router';
+import { ExceptionService } from './exception.service';
 
 @Injectable()
 export class HttpService extends Http {
 
     /**
-     * Observable server validation source
-     */
-    private validationSource = new BehaviorSubject<any>({});
-
-    /**
-     * Observable server validation stream
-     */
-    validation$ = this.validationSource.asObservable();
-
-    /**
-     * Observable source for general errors
-     */
-    private generalErrorsSource = new BehaviorSubject<any>({});
-
-    /**
-     * Observable stream for general errors (400, 500 ...)
-     */
-    generalErrors$ = this.generalErrorsSource.asObservable();
-
-
-    /**
      * Constructor
      */
-    constructor(_backend: ConnectionBackend, _defaultOptions: RequestOptions, private router: Router, private config: any) {
+    constructor(
+        _backend: ConnectionBackend,
+        _defaultOptions: RequestOptions,
+        private router: Router,
+        private exceptionService: ExceptionService,
+        private config: any)
+    {
         super(_backend, _defaultOptions);
 
         config.endpoints = config.endpoints || {};
@@ -44,10 +30,6 @@ export class HttpService extends Http {
             config.tokenGetter = () => localStorage.getItem(config.tokenKey) as string;
         }
 
-        // let jwtHeader = localStorage.getItem(config.tokenKey);
-        // if (jwtHeader != null) {
-        //     this._defaultOptions.headers.append('Authorization', 'Token ' + jwtHeader);
-        // }
     }
 
     private requestWithToken(token: string, url: string | Request, options?: RequestOptionsArgs): Observable<Response> {
@@ -130,15 +112,11 @@ export class HttpService extends Http {
                         break;
                 }
                 return Observable.throw(err);
-            } else if (err.status === 412 || err.status === 422) {
-                this.processValidation(err); 
-                return Observable.throw(err);
             } else {
-                let errorsBody = err._body || '[]';
-                let errors = JSON.parse(errorsBody);
-                this.generalErrorsSource.next(errors);
+                this.exceptionService.handleError(err);
                 return Observable.throw(err);
             }
+            
         });
 
     }
@@ -193,23 +171,6 @@ export class HttpService extends Http {
         return url;
     }
 
-    /**
-     * Process validation error messages and notify validation$ subscribers
-     */
-    private processValidation(error: any) {
-      if (error.status === 412) {
-          let errorsBody = error._body || '[]';
-          let errors = JSON.parse(errorsBody);
-          for (let err of errors) {
-            let parts = err.error.split('.');
-            err.error_method = parts[0] || null;
-            err.error_entity = parts[1] || null;
-            err.error_field  = parts[2] || null;
-          }
-          
-          this.validationSource.next(errors);
-        }
-    }
 }
 
 /**
@@ -240,7 +201,7 @@ export class HttpService extends Http {
 export function HttpServiceProvider(config: any) {
     return {
         provide: Http,
-        useFactory: (backend: XHRBackend, defaultOptions: RequestOptions, router: Router) => new HttpService(backend, defaultOptions, router, config),
-        deps: [XHRBackend, RequestOptions, Router]
+        useFactory: (backend: XHRBackend, defaultOptions: RequestOptions, router: Router, exceptionService: ExceptionService) => new HttpService(backend, defaultOptions, router, exceptionService, config),
+        deps: [XHRBackend, RequestOptions, Router, ExceptionService]
     };
 }
