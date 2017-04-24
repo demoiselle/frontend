@@ -22,6 +22,7 @@ import { Subscription } from 'rxjs/Subscription';
   selector: '[dmlHasRoles]'
 })
 export class DmlHasRolesDirective {
+  private hasView: boolean = false; // indica se a porção do DOM está visível ou não
 
   loginSubscription: Subscription;
   private context: DmlHasRolesContext = new DmlHasRolesContext();
@@ -44,9 +45,12 @@ export class DmlHasRolesDirective {
 
   private updateView() {
     if (this.context.$roles != null) {
-      this._viewContainer.clear();
-      if (this.authService.isAuthorized(this.context.$roles)) {
-        this._viewContainer.createEmbeddedView(this._template);
+      if ( !this.authService.isAuthorized( this.context.$roles ) && this.hasView ) {
+        this._viewContainer.clear();
+        this.hasView = false;
+      } else if ( this.authService.isAuthorized( this.context.$roles ) && !this.hasView ) {
+        this._viewContainer.createEmbeddedView( this._template );
+        this.hasView = true;
       }
     }
   }

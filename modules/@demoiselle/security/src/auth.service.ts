@@ -54,12 +54,18 @@ export class AuthService {
     let tokenString = this.config.tokenGetter(); 
     if (tokenString instanceof Promise) {
       tokenString.then((tokenFromPromise: string) => {
-          this.token = this.tokenFromString(tokenFromPromise);
+         this.token = this.tokenFromString(tokenFromPromise);
+          if ( this.config.doReToken )
           this.reToken();
+        else
+          this.setTokenInterval();
       });
     } else {
       this.token = this.tokenFromString(tokenString);
-      this.reToken();
+      if ( this.config.doReToken )
+        this.reToken();
+      else
+        this.setTokenInterval();
     }
   }
 
@@ -232,12 +238,14 @@ export class AuthService {
   setTokenInterval() {
     let tokenData = this.getDataFromToken();
     if (tokenData) {
-      let intervalInSeconds = tokenData.exp - tokenData.iat;
+      let intervalInSeconds = tokenData.exp - ( new Date() ).getTime() / 1000;
       let intervalInMiliseconds = intervalInSeconds * 1000;
-
-      this.tokenInterval = Observable.interval(intervalInMiliseconds).subscribe(() => {
+      if ( intervalInMiliseconds < 0 )
         this.unsetTokenInterval();
-      });
+      else
+        this.tokenInterval = Observable.interval( intervalInMiliseconds ).subscribe(() => {
+          this.unsetTokenInterval();
+        });
     }
   }
 
@@ -250,17 +258,21 @@ export class AuthService {
       //localStorage.removeItem(this.config.tokenKey);
       this.removeToken();
     }
+    // notifica os ouvintes de que o token expirou
+    this.loginChangeSource.next( '' );
   }
 
   setReTokenInterval() {
     let tokenData = this.getDataFromToken();
     if (tokenData) {
-      let intervalInSeconds = tokenData.exp - tokenData.iat - 60; // one minute before expiration
+      let intervalInSeconds = tokenData.exp - ( new Date() ).getTime() / 1000 - 60; // one minute before expiration
       let intervalInMiliseconds = intervalInSeconds * 1000;
-
-      this.reTokenInterval = Observable.interval(intervalInMiliseconds).subscribe(() => {
+      if ( intervalInMiliseconds < 0 )
         this.reToken();
-      });
+      else
+        this.reTokenInterval = Observable.interval( intervalInMiliseconds ).subscribe(() => {
+          this.reToken();
+        });
     }
   }
 
