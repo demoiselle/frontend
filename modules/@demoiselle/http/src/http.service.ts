@@ -88,6 +88,12 @@ export class HttpService extends Http {
         return this.intercept(super.delete(url, options));
     }
 
+    patch(url: string, body: any, options?: RequestOptionsArgs): Observable<Response> {
+        url = this.appendEndpoint(url);
+        return this.intercept(super.patch(url, body, options));
+
+    }
+
     intercept(observable: Observable<Response>): Observable<Response> {
         return observable.catch((err, source) => {
             if (err.status === 401) {
