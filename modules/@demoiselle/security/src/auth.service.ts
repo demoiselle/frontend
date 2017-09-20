@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Rx';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Router } from '@angular/router';
 
-import { AuthHttp, JwtHelper } from 'angular2-jwt';
+import { JwtHelper } from 'angular2-jwt';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +30,7 @@ export class AuthService {
   // Url for redirection after login
   public redirectUrl: string = '';
 
-  constructor(private http: Http, private authHttp: AuthHttp, private router: Router, private config: any) {
+  constructor(private http: Http, private router: Router, private config: any) {
     // config.authEndpointUrl = config.authEndpointUrl || '';
     config.loginResourcePath = config.loginResourcePath || 'auth/login';
     config.tokenKey = config.tokenKey || 'id_token';
@@ -287,7 +287,7 @@ export class AuthService {
 export function AuthServiceProvider(config: any) {
   return {
     provide: AuthService,
-    useFactory: (http: Http, authHttp: AuthHttp, router: Router) => new AuthService(http, authHttp, router, config),
-    deps: [Http, AuthHttp, Router]
+    useFactory: (http: Http, router: Router) => new AuthService(http, router, config),
+    deps: [Http, Router]
   };
 }
