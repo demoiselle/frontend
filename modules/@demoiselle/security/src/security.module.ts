@@ -16,17 +16,7 @@ import { provideAuth, AUTH_PROVIDERS } from 'angular2-jwt';
     ],
     providers: [
         // AuthService,
-        AuthGuard,
-        AUTH_PROVIDERS,
-        provideAuth({
-            headerName: 'Authorization',
-            headerPrefix: 'Token ',
-            tokenName: 'id_token',
-            // tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
-            globalHeaders: [{ 'Content-Type': 'application/json' }],
-            noJwtError: false,
-            noTokenScheme: false
-        })
+        AuthGuard
     ],
     exports: [
         DmlIsLoggedDirective,

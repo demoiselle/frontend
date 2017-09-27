@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "noImplicitAny": true,
+    "declaration": true,
+    "stripInternal": true,
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "exclude": [
+    "node_modules",
+    "typings/main.d.ts",
+    "typings/main",
+    "testing",
+    "test"
+  ],
+  
+  "angularCompilerOptions": {
+    "skipTemplateCodegen": true
+  }
+}
