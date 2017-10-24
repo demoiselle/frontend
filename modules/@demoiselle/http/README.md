@@ -13,29 +13,9 @@ npm install --save @demoiselle/http
 ```
 
 
-## Utilização
+## Utilização e configuração
 
-Adicionar o serviço aos providers da aplicação principal (ou alternativamente no `CoreModule`), através da chamada a função `HttpServiceProvider`:
-
-```javascript
-import { HttpServiceProvider } from '@demoiselle/http';
-// ...código resumido
-
-@NgModule({
-// ...código resumido
-providers: [
-    HttpServiceProvider({
-      endpoints: process.env.CONF.endpoints, 
-      multitenancy: process.env.CONF.multitenancy,
-      unAuthorizedRoute: '/login',
-      tokenKey : 'id_token'
-    }),
-    //... código resumido
-]})
-export class AppModule {
-    //...código resumido
-}
-```
+https://demoiselle.gitbooks.io/documentacao-frontend/content/m%C3%B3dulo-http/configurando-sua-aplicacao.html
 
 
 ### Exemplo - GET Request

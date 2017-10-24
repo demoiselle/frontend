@@ -13,30 +13,9 @@ npm install --save @demoiselle/security
 ```
 
 
-## Utilização
+## Utilização e configuração
 
-Adicionar o serviço de autenticação aos providers da aplicação principal (ou alternativamente no CoreModule), através da chamada a função AuthServiceProvider:
-
-```javascript
-import { AuthServiceProvider } from '@demoiselle/security';
-// ...código resumido
-
-@NgModule({
-// ...código resumido
-providers: [
-    AuthServiceProvider({
-          authEndpointUrl: 'http://localhost:9090/app/api/v1/'
-          loginResourcePath: 'auth/login',
-          tokenKey: 'id_token',
-          loginRoute: '/login'
-        }),
-    // ...código resumido
-]})
-export class AppModule {
-    //...código resumido
-}
-```
-
+https://demoiselle.gitbooks.io/documentacao-frontend/content/modulo-security/configurando-sua-aplicacao.html
 
 ### Exemplo - Login
 
