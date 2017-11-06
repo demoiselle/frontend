@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import 'rxjs/add/operator/map';
+import "rxjs/add/observable/interval";
 import { Router } from '@angular/router';
 
 import { JwtHelper } from 'angular2-jwt';

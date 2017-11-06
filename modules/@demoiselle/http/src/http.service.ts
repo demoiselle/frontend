@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, ConnectionBackend, RequestOptionsArgs, Response, XHRBackend } from '@angular/http';
-import { Observable, BehaviorSubject } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import 'rxjs/add/observable/fromPromise';
+import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/operator/catch';
 import { Request } from '@angular/http/src/static_request';
 import { Router } from '@angular/router';
 import { ExceptionService } from './exception.service';
