@@ -12,7 +12,6 @@
   "license": "MIT",
   "scripts": {
     "prebuild": "rm -rf dist",
-    "build": "../../../node_modules/typescript/bin/tsc || true",
     "build": "../../../node_modules/.bin/ngc -p ./tsconfig-ngc.json",
     "typings": "typings",
     "prepublish": "npm run build"

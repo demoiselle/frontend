@@ -38,7 +38,6 @@
     "@angular/core": "^2.4.7 || ^4.0.0",
     "@angular/platform-browser": "^2.4.7 || ^4.0.0",
     "@angular/platform-browser-dynamic": "^2.4.7 || ^4.0.0",
-
     "@angular/animations": "^4.2.4",
     "@angular/forms": "^4.2.4",
     "@angular/http": "^4.2.4",
@@ -46,7 +45,6 @@
     "core-js": "^2.4.1",
     "rxjs": "^5.4.2",
     "zone.js": "^0.8.14"
-    
   },
   "devDependencies": {
     "@angularclass/hmr-loader": "^3.0.2",

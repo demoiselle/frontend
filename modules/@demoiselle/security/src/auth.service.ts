@@ -51,18 +51,18 @@ export class AuthService {
   }
 
   initializeToken() {
-    let tokenString = this.config.tokenGetter(); 
+    let tokenString = this.config.tokenGetter();
     if (tokenString instanceof Promise) {
       tokenString.then((tokenFromPromise: string) => {
-         this.token = this.tokenFromString(tokenFromPromise);
-          if ( this.config.doReToken )
+        this.token = this.tokenFromString(tokenFromPromise);
+        if (this.config.doReToken)
           this.reToken();
         else
           this.setTokenInterval();
       });
     } else {
       this.token = this.tokenFromString(tokenString);
-      if ( this.config.doReToken )
+      if (this.config.doReToken)
         this.reToken();
       else
         this.setTokenInterval();
@@ -75,8 +75,8 @@ export class AuthService {
       let type = tokenString.split(' ')[0];
       let key = tokenString.substring(type.length + 1);
       return {
-          type: type,
-          key: key
+        type: type,
+        key: key
       };
     } else {
       return null;
@@ -122,7 +122,7 @@ export class AuthService {
     let url = this.config.authEndpointUrl + this.config.loginResourcePath;
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
-    
+
     return this.http.post(url, JSON.stringify(credentials), { headers: headers })
       .map((res) => {
         // ** located in header response
@@ -136,7 +136,7 @@ export class AuthService {
           type: json.type,
           key: json.key
         };
-        
+
         //localStorage.setItem(this.config.tokenKey, token);
         this.setToken(token);
 
@@ -146,14 +146,33 @@ export class AuthService {
           this.setTokenInterval();
         }
         this.loginChangeSource.next(token.key);
-        this.router.navigate([ this.redirectUrl ]);
-        
+        this.router.navigate([this.redirectUrl]);
+
         return json;
 
       });
 
   }
-  
+
+  amnesia(credentials: any) {
+    let url = this.config.authEndpointUrl + this.config.loginResourcePath + '/amnesia';
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+
+    return this.http.post(url, JSON.stringify(credentials), { headers: headers })
+      .map((res) => { });
+  }
+
+  register(credentials: any) {
+    let url = this.config.authEndpointUrl + this.config.loginResourcePath + '/register';
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+
+    return this.http.post(url, JSON.stringify(credentials), { headers: headers })
+      .map((res) => { });
+
+  }
+
   getDataFromToken() {
     let data: any = null;
     if (this.token !== null && typeof this.token !== undefined) {
@@ -212,7 +231,7 @@ export class AuthService {
       this.http.get(this.config.authEndpointUrl + 'auth', { headers: headers })
         .map(res => res.json())
         .subscribe((res) => {
-          
+
           let token = {
             type: res.type,
             key: res.key
@@ -238,12 +257,12 @@ export class AuthService {
   setTokenInterval() {
     let tokenData = this.getDataFromToken();
     if (tokenData) {
-      let intervalInSeconds = tokenData.exp - ( new Date() ).getTime() / 1000;
+      let intervalInSeconds = tokenData.exp - (new Date()).getTime() / 1000;
       let intervalInMiliseconds = intervalInSeconds * 1000;
-      if ( intervalInMiliseconds < 0 )
+      if (intervalInMiliseconds < 0)
         this.unsetTokenInterval();
       else
-        this.tokenInterval = Observable.interval( intervalInMiliseconds ).subscribe(() => {
+        this.tokenInterval = Observable.interval(intervalInMiliseconds).subscribe(() => {
           this.unsetTokenInterval();
         });
     }
@@ -259,18 +278,18 @@ export class AuthService {
       this.removeToken();
     }
     // notifica os ouvintes de que o token expirou
-    this.loginChangeSource.next( '' );
+    this.loginChangeSource.next('');
   }
 
   setReTokenInterval() {
     let tokenData = this.getDataFromToken();
     if (tokenData) {
-      let intervalInSeconds = tokenData.exp - ( new Date() ).getTime() / 1000 - 60; // one minute before expiration
+      let intervalInSeconds = tokenData.exp - (new Date()).getTime() / 1000 - 60; // one minute before expiration
       let intervalInMiliseconds = intervalInSeconds * 1000;
-      if ( intervalInMiliseconds < 0 )
+      if (intervalInMiliseconds < 0)
         this.reToken();
       else
-        this.reTokenInterval = Observable.interval( intervalInMiliseconds ).subscribe(() => {
+        this.reTokenInterval = Observable.interval(intervalInMiliseconds).subscribe(() => {
           this.reToken();
         });
     }
