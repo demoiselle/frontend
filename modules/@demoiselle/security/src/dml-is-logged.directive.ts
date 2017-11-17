@@ -1,5 +1,6 @@
 import { Directive, TemplateRef, Input, ViewContainerRef } from '@angular/core';
 import { AuthService } from './auth.service';
+import { TokenService } from './token.service';
 import { Subscription } from 'rxjs/Subscription';
 
 
@@ -29,10 +30,14 @@ export class DmlIsLoggedDirective {
 
   loginSubscription: Subscription;
 	
-  constructor(private _viewContainer: ViewContainerRef, private _template: TemplateRef<Object>,  private authService: AuthService) {
-    this.loginSubscription = this.authService.loginChange$.subscribe(
-      token => this.updateView()
-    );
+  constructor(
+    private _viewContainer: ViewContainerRef,
+    private _template: TemplateRef<Object>,
+    private authService: AuthService,
+    private tokenService: TokenService) {
+      this.loginSubscription = this.authService.loginChange$.subscribe(
+        token => this.updateView()
+      );
   }
 
   ngOnDestroy() {
@@ -48,14 +53,14 @@ export class DmlIsLoggedDirective {
   }
 
   private updateView() {
-    if ( ( ( !this.authService.isAuthenticated() ) ? this.enabled : !this.enabled ) && this.hasView ) {
+    if ( ( ( !this.tokenService.isAuthenticated() ) ? this.enabled : !this.enabled ) && this.hasView ) {
       /* se a porção do DOM estiver visível então esconde se
        * 1) não estiver autenticado e enabled=true
        * 2) estiver autenticado e enabled=false
        */
       this._viewContainer.clear();
       this.hasView = false;
-    } else if ( ( this.authService.isAuthenticated() ? this.enabled : !this.enabled ) && !this.hasView ) {
+    } else if ( ( this.tokenService.isAuthenticated() ? this.enabled : !this.enabled ) && !this.hasView ) {
       /* se a porção do DOM não estiver visível, então torna visível se
        * 1) estiver autenticado e enabled=true
        * 2) não estiver autenticado e enabled=false

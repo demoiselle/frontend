@@ -1,5 +1,6 @@
 import { Directive, TemplateRef, Input, ViewContainerRef } from '@angular/core';
 import { AuthService } from './auth.service';
+import { TokenService } from './token.service';
 import { Subscription } from 'rxjs/Subscription';
 
 
@@ -27,10 +28,14 @@ export class DmlHasRolesDirective {
   loginSubscription: Subscription;
   private context: DmlHasRolesContext = new DmlHasRolesContext();
   
-  constructor(private _viewContainer: ViewContainerRef, private _template: TemplateRef<Object>, private authService: AuthService) {
-    this.loginSubscription = this.authService.loginChange$.subscribe(
-      token => this.updateView()
-    );
+  constructor(
+    private _viewContainer: ViewContainerRef,
+    private _template: TemplateRef<Object>,
+    private authService: AuthService,
+    private tokenService: TokenService) {
+      this.loginSubscription = this.authService.loginChange$.subscribe(
+        token => this.updateView()
+      );
   }
 
   ngOnDestroy() {
@@ -45,10 +50,10 @@ export class DmlHasRolesDirective {
 
   private updateView() {
     if (this.context.$roles != null) {
-      if ( !this.authService.isAuthorized( this.context.$roles ) && this.hasView ) {
+      if ( !this.tokenService.isAuthorized( this.context.$roles ) && this.hasView ) {
         this._viewContainer.clear();
         this.hasView = false;
-      } else if ( this.authService.isAuthorized( this.context.$roles ) && !this.hasView ) {
+      } else if ( this.tokenService.isAuthorized( this.context.$roles ) && !this.hasView ) {
         this._viewContainer.createEmbeddedView( this._template );
         this.hasView = true;
       }

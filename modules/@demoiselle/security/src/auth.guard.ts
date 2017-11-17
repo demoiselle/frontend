@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router, CanActivate, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
 
 import { AuthService } from './auth.service';
+import { TokenService } from './token.service';
 
 /**
  * Serviço que intercepta acesso as rotas e redireciona para a página de login
@@ -19,15 +20,15 @@ import { AuthService } from './auth.service';
 @Injectable()
 export class AuthGuard implements CanActivate {
 
-    constructor(private router: Router, private authService: AuthService) { }
+    constructor(private router: Router, private authService: AuthService, private tokenService: TokenService) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
 
-        if (route.data && route.data.roles && !this.authService.isAuthorized(route.data.roles)) {
+        if (route.data && route.data.roles && !this.tokenService.isAuthorized(route.data.roles)) {
             return false;
         }
 
-        if (this.authService.isAuthenticated()) {
+        if (this.tokenService.isAuthenticated()) {
             // logged in so return true
             return true;
         }

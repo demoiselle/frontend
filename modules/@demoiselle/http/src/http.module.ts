@@ -1,10 +1,17 @@
-import { NgModule } from '@angular/core';
-import { HttpServiceProvider } from './http.service';
+import { NgModule, ModuleWithProviders } from '@angular/core';
+import { ExceptionService } from './exception.service';
 
 @NgModule({
-    declarations: [],
-    providers: []
+    declarations: []
 })
 
 export class DmlHttpModule {
+    static forRoot(): ModuleWithProviders {
+        return {
+          ngModule: DmlHttpModule,
+          providers: [
+            ExceptionService
+          ]
+        };
+      }
 }

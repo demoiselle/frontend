@@ -1,5 +1,6 @@
 import { Directive, ElementRef, Input, Renderer } from '@angular/core';
 import { AuthService } from './auth.service';
+import { TokenService } from './token.service';
 import { Subscription } from 'rxjs/Subscription';
 
 
@@ -26,7 +27,7 @@ export class DmlHasRolesDisableDirective {
     loginSubscription: Subscription;
     private context: DmlHasRolesDisableContext = new DmlHasRolesDisableContext();
 
-    constructor(private el: ElementRef, private renderer: Renderer, private authService: AuthService) {
+    constructor(private el: ElementRef, private renderer: Renderer, private authService: AuthService, private tokenService: TokenService) {
         this.loginSubscription = this.authService.loginChange$.subscribe(
             token => this.updateView()
         );
@@ -40,7 +41,7 @@ export class DmlHasRolesDisableDirective {
 
     private updateView() {
         if (this.context.$roles != null) {
-            let disabled = !this.authService.isAuthorized(this.context.$roles);
+            let disabled = !this.tokenService.isAuthorized(this.context.$roles);
             this.setElementDisabled(this.el.nativeElement, disabled); 
         }
     }

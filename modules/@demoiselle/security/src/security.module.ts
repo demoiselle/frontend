@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
-// import { AuthService } from './auth.service';
+import { NgModule, ModuleWithProviders } from "@angular/core";
+import { AuthService } from './auth.service';
+import { TokenService } from './token.service';
 import { AuthGuard } from './auth.guard';
 import { DmlIsLoggedDirective } from './dml-is-logged.directive';
 import { DmlHasRolesDirective } from './dml-has-roles.directive';
 import { DmlHasRolesDisableDirective } from './dml-has-roles-disable.directive';
-
-import { provideAuth, AUTH_PROVIDERS } from 'angular2-jwt';
+import { AuthOptions } from './auth-options';
 
 
 @NgModule({
@@ -13,10 +13,6 @@ import { provideAuth, AUTH_PROVIDERS } from 'angular2-jwt';
         DmlIsLoggedDirective,
         DmlHasRolesDirective,
         DmlHasRolesDisableDirective
-    ],
-    providers: [
-        // AuthService,
-        AuthGuard
     ],
     exports: [
         DmlIsLoggedDirective,
@@ -26,4 +22,15 @@ import { provideAuth, AUTH_PROVIDERS } from 'angular2-jwt';
 })
 
 export class SecurityModule {
+    static forRoot(): ModuleWithProviders {
+        return {
+          ngModule: SecurityModule,
+          providers: [
+            AuthGuard,
+            TokenService,
+            AuthOptions,
+            AuthService
+          ]
+        };
+      }
 }

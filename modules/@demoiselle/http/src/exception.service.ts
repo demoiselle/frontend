@@ -2,47 +2,35 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
+/**
+ * @class ExceptionService
+ * 
+ * A simple service to provide Observables to data service errors
+ * To subscribe and handle error events in you app:
+ * 
+ * errorsSubscription: Subscription;
+ * constructor(private exceptionService: ExceptionService, ...) {
+ *   this.errorsSubscription = this.exceptionService.errors$.subscribe(
+ *      error => this.handleError(error)
+ *   );
+ * }
+ *
+ */
 @Injectable()
 export class ExceptionService {
     /**
-     * Observable server validation source
+     * Observable source for errors
      */
-    private validationSource = new BehaviorSubject<any>({});
+    private errorsSource = new BehaviorSubject<any>(null);
 
     /**
-     * Observable server validation stream
+     * Errors Observable stream
      */
-    validation$ = this.validationSource.asObservable();
-
-    /**
-     * Observable source for general errors
-     */
-    private generalErrorsSource = new BehaviorSubject<any>({});
-
-    /**
-     * Observable stream for general errors (400, 500 ...)
-     */
-    generalErrors$ = this.generalErrorsSource.asObservable();
+    errors$ = this.errorsSource.asObservable();
 
 
     public handleError(error: any) {
-        let errorsBody = error._body || '[]';
-        let errors = JSON.parse(errorsBody);
-
-        if (error.status === 412) { // validation error
-          for (let err of errors) {
-            let parts = err.error.split('.');
-            err.error_method = parts[0] || null;
-            err.error_entity = parts[1] || null;
-            err.error_field  = parts[2] || null;
-          }
-          
-          this.validationSource.next(errors);
-        
-    
-        } else { // other errors
-            this.generalErrorsSource.next(errors);
-        }
+        this.errorsSource.next(error);
     }
 
 
