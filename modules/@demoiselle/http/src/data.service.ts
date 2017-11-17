@@ -9,7 +9,7 @@ export class DataService {
     protected _this: DataService;
     constructor(
         private url: string,
-        private rousourceName: string,
+        private resourceName: string,
         private http: HttpClient,
         private exceptionService: ExceptionService) { }
 
