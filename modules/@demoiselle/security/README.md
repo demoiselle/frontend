@@ -1,7 +1,8 @@
 # Security Module
 
 O módulo Security disponibiliza os seguintes serviços/componentes:
-* AuthService: Provê serviços de autenticação e autorização baseado nas informações do token vindo do backend Demoiselle;
+* AuthService: Provê serviços de autenticação e reToken;
+* TokenService: Provê serviços de armazenamento e acesso ao token de segurança, assim como verificação se o usuário está autorizado (baseado em roles);
 * AuthGuard: Serviço que intercepta acesso as rotas e redireciona para a página de login caso a autenticação seja requerida;
 * Diretivas de segurança: Diretivas para exibição de conteúdo de acordo com autenticação/autorização;
 
@@ -36,22 +37,39 @@ this.authService.login(this.user)
 ```
 
 
-## Configuração do AuthServiceProvider
+## Configuração
 
-- **_authEndpointUrl_**: string com o endereço do serviço que irá realizar a autenticação;
+A classe AuthOptions permite a configuração do módulo Security. As seguintes propriedades podem ser configuradas:
+
+- **_authEndpointUrl_**: (Obrigatório) string com o endereço do serviço que irá realizar a autenticação;
 - **_loginResourcePath_**: string com o caminho do recurso que responde pela operação de login no backend;
 - **_tokenKey_** : chave localstorage para acesso ao token jwt;
 - **_loginRoute_**: string com a rota que apresenta a tela de login na aplicação;
+- **_doReToken_**: informa se o re-token deve ser realizado automaticamente antes da expiração do token;
+- **_tokenGetter_**: função javascript para obtenção do token;
+- **_tokenSetter_**: função javascript para alteração do valor do token;
+- **_tokenRemover_**: função javascript para remoção do token;
+
+
+
 
 ### Exemplo de configuração
 
 ```javascript
-{
-    authEndpointUrl: '~user/', // ou no formato 'http://localhost:9090/app/api/v1/'
-    loginResourcePath: 'auth/login',
-    tokenKey: 'id_token',
-    loginRoute: '/login'
-}
+
+    // Demoiselle AuthOptions, using default values except api endpoint
+    export class MyAuthOptions extends AuthOptions {
+       authEndpointUrl = environment.apiUrl;
+    }
+    
+    // ...
+    providers: [
+        // ...
+        {
+          provide: AuthOptions,
+          useClass: MyAuthOptions
+        },
+    ]
 ```
 
 ## ReToken
