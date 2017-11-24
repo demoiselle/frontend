@@ -23,13 +23,13 @@ export class AuthGuard implements CanActivate {
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
 
-        if (route.data && route.data.roles && !this.authService.isAuthorized(route.data.roles)) {
-            return false;
-        }
-
         if (this.authService.isAuthenticated()) {
-            // logged in so return true
-            return true;
+            if (route.data && route.data.roles && !this.authService.isAuthorized(route.data.roles)) {
+              throw new Error('Not Authorized. The user roles do not match any of expected route roles');
+            } else {
+              // logged in so return true
+              return true;
+            }
         }
 
         let url: string = state.url;
