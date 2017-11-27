@@ -13,11 +13,28 @@ export class DataService {
         private http: HttpClient,
         private exceptionService: ExceptionService) { }
 
-    findAll() {
-        return this.http.get(this.url, {observe: 'response'})
+    findAll(currentPage: number = null, itemsPerPage: number = null, filter = '', field: string = null, desc = false) {
+        let pagination = '';
+        if (currentPage !== null && itemsPerPage !== null) {
+            const start = (currentPage * itemsPerPage) - (itemsPerPage);
+            const end = (currentPage * itemsPerPage) - 1;
+            pagination = 'range=' + start + '-' + end;
+        }
+        let orderQuery = '';
+        if (field) {
+          orderQuery = '&sort=' + field + (desc ? '&desc' : '');
+        }
+
+        let queryString = pagination + filter + orderQuery;
+        if (queryString !== '') {
+            queryString = '?' + queryString;
+        }
+
+        return this.http.get(this.url + queryString, {observe: 'response'})
             // .map(response => response.body)
             .catch(error => this.handleError(error));
     }
+
 
     find(id: string) {
         return this.http.get(`${this.url}/${id}`)
