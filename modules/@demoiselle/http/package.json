@@ -1,6 +1,6 @@
 {
   "name": "@demoiselle/http",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Demoiselle Frontend Http Service",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
