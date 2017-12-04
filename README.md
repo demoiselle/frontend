@@ -1,7 +1,8 @@
 # Demoiselle Frontend [![Build Status](https://travis-ci.org/demoiselle/frontend.svg?branch=master)](https://travis-ci.org/demoiselle/frontend)
 
-Módulo Security [![NPM version][npm-image]](https://www.npmjs.com/package/@demoiselle/security) 
-Módulo Http [![NPM version][npm-image]](https://www.npmjs.com/package/@demoiselle/http) 
+Módulo Security [![npm version](https://badge.fury.io/js/%40demoiselle%2Fsecurity.svg)](https://badge.fury.io/js/%40demoiselle%2Fsecurity)
+
+Módulo Http [![npm version](https://badge.fury.io/js/%40demoiselle%2Fhttp.svg)](https://badge.fury.io/js/%40demoiselle%2Fhttp)
 
 O Projeto Demoiselle Frontend tem como objetivo oferecer módulos para as terefas mais comuns e que facilitam o desenvolvimento de aplicações integradas com o Backend Demoiselle. Os módulos ficam localizados abaixo de 'modules/@demoiselle'. Acesse a documentação de cada módulo na lista abaixo:
 
