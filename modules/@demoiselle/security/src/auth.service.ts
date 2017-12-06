@@ -10,7 +10,6 @@ import { AuthOptions } from './auth-options';
 
 @Injectable()
 export class AuthService {
-
   private tokenInterval: any = null;
   private reTokenInterval: any = null;
 
@@ -22,8 +21,12 @@ export class AuthService {
   // Url for redirection after login
   public redirectUrl = '';
 
-  constructor(private http: HttpClient, private router: Router, private tokenService: TokenService, private options: AuthOptions) {
-
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private tokenService: TokenService,
+    private options: AuthOptions
+  ) {
     // config.loginResourcePath = config.loginResourcePath || 'auth/login';
     // config.loginRoute = config.loginRoute || '/login';
     // config.doReToken = config.doReToken || false;
@@ -59,9 +62,9 @@ export class AuthService {
     let headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
 
-    return this.http.post(url, JSON.stringify(credentials), { headers: headers})
-      .map((res) => {
-
+    return this.http
+      .post(url, JSON.stringify(credentials), { headers: headers })
+      .map(res => {
         let token = res as Token;
 
         this.tokenService.setToken(token);
@@ -75,9 +78,33 @@ export class AuthService {
         this.router.navigate([this.redirectUrl]);
 
         return res;
-
       });
+  }
 
+  social(social: any) {
+    let url =
+      this.options.authEndpointUrl + this.options.loginResourcePath + '/social';
+    // TODO: verify the need of add headers (or interceptor already add it)
+    let headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+
+    return this.http
+      .post(url, JSON.stringify(social), { headers: headers })
+      .map(res => {
+        let token = res as Token;
+
+        this.tokenService.setToken(token);
+
+        if (this.options.doReToken) {
+          this.setReTokenInterval();
+        } else {
+          this.setTokenInterval();
+        }
+        this.loginChangeSource.next(token.key);
+        this.router.navigate([this.redirectUrl]);
+
+        return res;
+      });
   }
 
   logout() {
@@ -87,29 +114,36 @@ export class AuthService {
   }
 
   amnesia(credentials: any) {
-    let url = this.options.authEndpointUrl + this.options.loginResourcePath + '/amnesia';
+    let url =
+      this.options.authEndpointUrl +
+      this.options.loginResourcePath +
+      '/amnesia';
     // TODO: verify the need of add headers (or interceptor already add it)
     let headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
 
-    return this.http.post(url, JSON.stringify(credentials), { headers: headers })
-      .map((res) => { });
+    return this.http
+      .post(url, JSON.stringify(credentials), { headers: headers })
+      .map(res => {});
   }
 
   register(credentials: any) {
-    let url = this.options.authEndpointUrl + this.options.loginResourcePath + '/register';
+    let url =
+      this.options.authEndpointUrl +
+      this.options.loginResourcePath +
+      '/register';
     // TODO: verify the need of add headers (or interceptor already add it)
     let headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
 
-    return this.http.post(url, JSON.stringify(credentials), { headers: headers })
-      .map((res) => { });
-
+    return this.http
+      .post(url, JSON.stringify(credentials), { headers: headers })
+      .map(res => {});
   }
 
   /**
    * Performs the reToken process if active
-   * Gets a new token from backend and schedule a new reToken 
+   * Gets a new token from backend and schedule a new reToken
    */
   reToken() {
     if (this.options.doReToken && this.tokenService.isAuthenticated()) {
@@ -118,9 +152,9 @@ export class AuthService {
       // headers.append('Content-Type', 'application/json');
       // headers.set('Authorization', this.token.type + ' ' + this.token.key);
 
-      this.http.get(this.options.authEndpointUrl + 'auth' /*, { headers: headers }*/)
-        .subscribe((res) => {
-
+      this.http
+        .get(this.options.authEndpointUrl + 'auth' /*, { headers: headers }*/)
+        .subscribe(res => {
           let token = res as Token;
 
           this.tokenService.setToken(token);
@@ -142,12 +176,14 @@ export class AuthService {
   setTokenInterval() {
     let tokenData = this.tokenService.getDataFromToken();
     if (tokenData) {
-      let intervalInSeconds = tokenData.exp - (new Date()).getTime() / 1000;
+      let intervalInSeconds = tokenData.exp - new Date().getTime() / 1000;
       let intervalInMiliseconds = intervalInSeconds * 1000;
       if (intervalInMiliseconds < 0) {
         this.unsetTokenInterval();
       } else {
-        this.tokenInterval = Observable.interval(intervalInMiliseconds).subscribe(() => {
+        this.tokenInterval = Observable.interval(
+          intervalInMiliseconds
+        ).subscribe(() => {
           this.unsetTokenInterval();
         });
       }
@@ -167,12 +203,14 @@ export class AuthService {
   setReTokenInterval() {
     let tokenData = this.tokenService.getDataFromToken();
     if (tokenData) {
-      let intervalInSeconds = tokenData.exp - (new Date()).getTime() / 1000 - 60; // one minute before expiration
+      let intervalInSeconds = tokenData.exp - new Date().getTime() / 1000 - 60; // one minute before expiration
       let intervalInMiliseconds = intervalInSeconds * 1000;
       if (intervalInMiliseconds < 0) {
         this.reToken();
       } else {
-        this.reTokenInterval = Observable.interval(intervalInMiliseconds).subscribe(() => {
+        this.reTokenInterval = Observable.interval(
+          intervalInMiliseconds
+        ).subscribe(() => {
           this.reToken();
         });
       }
