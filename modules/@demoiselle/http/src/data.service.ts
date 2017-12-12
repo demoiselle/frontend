@@ -8,10 +8,10 @@ import { ExceptionService } from './exception.service';
 export class DataService {
     protected _this: DataService;
     constructor(
-        private url: string,
-        private resourceName: string,
-        private http: HttpClient,
-        private exceptionService: ExceptionService) { }
+        protected url: string,
+        protected resourceName: string,
+        protected http: HttpClient,
+        protected exceptionService: ExceptionService) { }
 
     findAll(currentPage: number = null, itemsPerPage: number = null, filter = '', field: string = null, desc = false) {
         let pagination = '';
