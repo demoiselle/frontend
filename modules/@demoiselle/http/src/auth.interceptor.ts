@@ -14,7 +14,10 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
     // Clone the request to add the new headers.
-    let authReq = req.clone({ headers: req.headers.set('Content-Type', 'application/json') });
+    let authReq = req;
+    if (!(req.body instanceof FormData)) {
+      authReq = req.clone({ headers: req.headers.set('Content-Type', 'application/json') });
+    }
 
     // let token = localStorage.getItem('id_token');
     const token = this.tokenService.getToken();
