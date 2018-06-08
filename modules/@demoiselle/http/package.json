@@ -1,6 +1,6 @@
 {
   "name": "@demoiselle/http",
-  "version": "2.0.3",
+  "version": "3.0.0",
   "description": "Demoiselle Frontend Http Service",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -8,15 +8,16 @@
     "dist",
     "src"
   ],
-  "author": "angular",
+  "author": "demoiselle",
   "license": "MIT",
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "../../../node_modules/.bin/ngc -p ./tsconfig-ngc.json",
-    "typings": "typings",
-    "prepublish": "npm run build"
+    "typings": "typings"
   },
-  "peerDependencies": {},
+  "peerDependencies": {
+    "@angular/common": "^6.0.0"
+  },
   "devDependencies": {},
   "repository": {
     "type": "git",

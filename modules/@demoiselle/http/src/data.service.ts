@@ -13,7 +13,7 @@ export class DataService {
         protected http: HttpClient,
         protected exceptionService: ExceptionService) { }
 
-    findAll(currentPage: number = null, itemsPerPage: number = null, filter = '', field: string = null, desc = false) {
+    findAll(currentPage: number = null, itemsPerPage: number = null, filter = '', field: string = null, desc = false): any {
         let pagination = '';
         if (currentPage !== null && itemsPerPage !== null) {
             const start = (currentPage * itemsPerPage) - (itemsPerPage);
@@ -36,25 +36,25 @@ export class DataService {
     }
 
 
-    find(id: string) {
+    find(id: string): any {
         return this.http.get(`${this.url}/${id}`)
             // .map(response => response.data)
             .catch(error => this.handleError(error));
     }
 
-    create(resource: any) {
+    create(resource: any): any {
 
         return this.http.post(this.url, JSON.stringify(resource))
             .catch(error => this.handleError(error));
     }
 
-    update(resource: any) {
+    update(resource: any): any {
         // patch or put???
         return this.http.put(`${this.url}`, JSON.stringify(resource))
         .catch(error => this.handleError(error));
     }
 
-    delete(id: string) {
+    delete(id: string): any {
         return this.http.delete(`${this.url}/${id}`)
         .catch(error => this.handleError(error));
     }

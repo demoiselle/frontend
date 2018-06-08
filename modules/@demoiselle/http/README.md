@@ -1,5 +1,11 @@
 # Serviços Http
 
+Compatibilidade com o Angular:
+- 3.x para Angular 6
+- 2.x para Angular 5
+- 1.x para Angular 2 e 4
+
+
 São disponibilizados os seguintes serviços:
 * Interceptador para adição automática de header para o token JWT no cabeçalho de cada requisição;
 * Serviço para tratamento de erros;

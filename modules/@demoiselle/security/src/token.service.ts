@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { JwtHelper } from 'angular2-jwt';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { AuthOptions } from './auth-options';
 
 export interface Token {
@@ -10,7 +10,7 @@ export interface Token {
 @Injectable()
 export class TokenService {
   private token: Token = null;
-  jwtHelper: JwtHelper = new JwtHelper();
+  jwtHelper = new JwtHelperService();
 
   constructor(private options: AuthOptions) {
     // options.tokenKey = options.tokenKey || 'id_token';

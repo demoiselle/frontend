@@ -1,5 +1,10 @@
 # Security Module
 
+Compatibilidade com o Angular:
+- 3.x para Angular 6
+- 2.x para Angular 5
+- 1.x para Angular 2 e 4
+
 O módulo Security disponibiliza os seguintes serviços/componentes:
 * AuthService: Provê serviços de autenticação e reToken;
 * TokenService: Provê serviços de armazenamento e acesso ao token de segurança, assim como verificação se o usuário está autorizado (baseado em roles);
