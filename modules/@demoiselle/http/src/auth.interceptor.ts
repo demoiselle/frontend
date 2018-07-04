@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpEvent, HttpInterceptor, HttpHandler, HttpRequest} from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { TokenService, Token } from '../../security/dist/token.service';
 
 
@@ -15,7 +15,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
     // Clone the request to add the new headers.
     let authReq = req;
-    if (!(req.body instanceof FormData)) {
+    if (!req.headers.has('Content-Type')) {
       authReq = req.clone({ headers: req.headers.set('Content-Type', 'application/json') });
     }
 

@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 /**
  * @class ExceptionService
- * 
+ *
  * A simple service to provide Observables to data service errors
  * To subscribe and handle error events in you app:
- * 
+ *
  * errorsSubscription: Subscription;
  * constructor(private exceptionService: ExceptionService, ...) {
  *   this.errorsSubscription = this.exceptionService.errors$.subscribe(
