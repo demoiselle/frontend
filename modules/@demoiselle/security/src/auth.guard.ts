@@ -8,14 +8,14 @@ import { TokenService } from './token.service';
  * Serviço que intercepta acesso as rotas e redireciona para a página de login
  * caso o usuário não esteja autenticado. Deve ser utilizado na configuração de rotas
  * da seguinte forma:
- * 
- * { 
+ *
+ * {
     path: '/home',
     ...
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard]
   },
- * 
- * 
+ *
+ *
  */
 @Injectable()
 export class AuthGuard implements CanActivate {

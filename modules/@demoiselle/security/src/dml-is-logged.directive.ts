@@ -1,7 +1,7 @@
-import { Directive, TemplateRef, Input, ViewContainerRef } from '@angular/core';
+import { Directive, TemplateRef, Input, ViewContainerRef, OnDestroy } from '@angular/core';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 
 /**
@@ -24,12 +24,12 @@ import { Subscription } from 'rxjs/Subscription';
 @Directive({
   selector: '[dmlIsLogged]'
 })
-export class DmlIsLoggedDirective {
-  private enabled: boolean = true; // indica se é para mostrar caso esteja logado (true) ou não logado (false)
-  private hasView: boolean = false; // indica se a porção do DOM está visível ou não
+export class DmlIsLoggedDirective implements OnDestroy {
+  private enabled = true; // indica se é para mostrar caso esteja logado (true) ou não logado (false)
+  private hasView = false; // indica se a porção do DOM está visível ou não
 
   loginSubscription: Subscription;
-	
+
   constructor(
     private _viewContainer: ViewContainerRef,
     private _template: TemplateRef<Object>,

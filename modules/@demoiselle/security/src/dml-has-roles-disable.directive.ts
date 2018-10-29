@@ -1,7 +1,7 @@
 import { Directive, ElementRef, Input, Renderer } from '@angular/core';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 
 /**
@@ -42,7 +42,7 @@ export class DmlHasRolesDisableDirective {
     private updateView() {
         if (this.context.$roles != null) {
             let disabled = !this.tokenService.isAuthorized(this.context.$roles);
-            this.setElementDisabled(this.el.nativeElement, disabled); 
+            this.setElementDisabled(this.el.nativeElement, disabled);
         }
     }
 
@@ -59,7 +59,7 @@ export class DmlHasRolesDisableDirective {
             } else {
                 this.renderer.setElementAttribute(element, 'disabled', null);
             }
-            
+
         } else {
 
             for (let i = 0; i < element.children.length; i++) {

@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders } from "@angular/core";
+import { NgModule, ModuleWithProviders } from '@angular/core';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
 import { AuthGuard } from './auth.guard';

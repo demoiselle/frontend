@@ -45,7 +45,6 @@
     "@angular/router": "^6.0.0",
     "core-js": "^2.4.1",
     "rxjs": "^6.0.0",
-    "rxjs-compat": "^6.2.0",
     "zone.js": "~0.8.26",
     "@angularclass/hmr-loader": "^3.0.2",
     "@types/core-js": "0.9.36",

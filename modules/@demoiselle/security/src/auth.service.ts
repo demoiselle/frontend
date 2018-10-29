@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/observable/interval';
+import { Observable, BehaviorSubject, interval } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { TokenService, Token } from './token.service';
 import { AuthOptions } from './auth-options';
@@ -63,22 +61,23 @@ export class AuthService {
     headers.append('Content-Type', 'application/json');
 
     return this.http
-      .post(url, JSON.stringify(credentials), { headers: headers })
-      .map(res => {
-        let token = res as Token;
+      .post(url, JSON.stringify(credentials), { headers: headers }).pipe(
+        map(res => {
+          let token = res as Token;
 
-        this.tokenService.setToken(token);
+          this.tokenService.setToken(token);
 
-        if (this.options.doReToken) {
-          this.setReTokenInterval();
-        } else {
-          this.setTokenInterval();
-        }
-        this.loginChangeSource.next(token.key);
-        this.router.navigate([this.redirectUrl]);
+          if (this.options.doReToken) {
+            this.setReTokenInterval();
+          } else {
+            this.setTokenInterval();
+          }
+          this.loginChangeSource.next(token.key);
+          this.router.navigate([this.redirectUrl]);
 
-        return res;
-      });
+          return res;
+        })
+      );
   }
 
   social(social: any) {
@@ -89,22 +88,23 @@ export class AuthService {
     headers.append('Content-Type', 'application/json');
 
     return this.http
-      .post(url, JSON.stringify(social), { headers: headers })
-      .map(res => {
-        let token = res as Token;
+      .post(url, JSON.stringify(social), { headers: headers }).pipe(
+        map(res => {
+          let token = res as Token;
 
-        this.tokenService.setToken(token);
+          this.tokenService.setToken(token);
 
-        if (this.options.doReToken) {
-          this.setReTokenInterval();
-        } else {
-          this.setTokenInterval();
-        }
-        this.loginChangeSource.next(token.key);
-        this.router.navigate([this.redirectUrl]);
+          if (this.options.doReToken) {
+            this.setReTokenInterval();
+          } else {
+            this.setTokenInterval();
+          }
+          this.loginChangeSource.next(token.key);
+          this.router.navigate([this.redirectUrl]);
 
-        return res;
-      });
+          return res;
+        })
+      );
   }
 
   logout() {
@@ -123,8 +123,9 @@ export class AuthService {
     headers.append('Content-Type', 'application/json');
 
     return this.http
-      .post(url, JSON.stringify(credentials), { headers: headers })
-      .map(res => {});
+      .post(url, JSON.stringify(credentials), { headers: headers }).pipe(
+        map(res => {})
+      );
   }
 
   register(credentials: any) {
@@ -137,8 +138,9 @@ export class AuthService {
     headers.append('Content-Type', 'application/json');
 
     return this.http
-      .post(url, JSON.stringify(credentials), { headers: headers })
-      .map(res => {});
+      .post(url, JSON.stringify(credentials), { headers: headers }).pipe(
+        map(res => {})
+      );
   }
 
   /**
@@ -181,7 +183,7 @@ export class AuthService {
       if (intervalInMiliseconds < 0) {
         this.unsetTokenInterval();
       } else {
-        this.tokenInterval = Observable.interval(
+        this.tokenInterval = interval(
           intervalInMiliseconds
         ).subscribe(() => {
           this.unsetTokenInterval();
@@ -208,7 +210,7 @@ export class AuthService {
       if (intervalInMiliseconds < 0) {
         this.reToken();
       } else {
-        this.reTokenInterval = Observable.interval(
+        this.reTokenInterval = interval(
           intervalInMiliseconds
         ).subscribe(() => {
           this.reToken();
